@@ -6,7 +6,7 @@ A secure and customizable system that allows users to access a WiFi network **on
 - Captive portal that redirects users after WiFi connection
 - Purchase of internet access based on time
 - Integration with payment gateway (MPESA Daraja API)
-- Access control based on MAC?IP and time
+- Access control based on MAC/IP and time
 - Admin dashboard to view and manage connected users
 
 ## Tech Stack
