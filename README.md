@@ -1,8 +1,6 @@
 # WiFi-Access-Control-System
 A secure and customizable system that allows users to access a WiFi network **only after payment**. The system uses a **captive portal**, integrated **payment gateway**, and **access control** logic to manage internet access for users in public or commercial spaces.
 
----
-
 
 ## Features
 - Captive portal that redirects users after WiFi connection
@@ -11,20 +9,16 @@ A secure and customizable system that allows users to access a WiFi network **on
 - Access control based on MAC?IP and time
 - Admin dashboard to view and manage connected users
 
----
-
 ## Tech Stack
 
-| Component       | Technology Used         |
-|-------------------------------------------|
-| Router Firmware | OpenWRT                 |
-| Captive Portal  | NoDogSplash             |
-| Backend         | Node.js                 |
-| Database        | PostgresSQL             |
-| Payment Gateway | MPESA Daraja API        |
-| Access Control  | IpTables                |
-
----
+| Component        | Technology Used     |
+|------------------|---------------------|
+| Router Firmware  | OpenWRT             |
+| Captive Portal   | NoDogSplash         |
+| Backend          | Node.js             |
+| Database         | PostgreSQL          |
+| Payment Gateway  | MPESA Daraja API    |
+| Access Control   | IpTables            |
 
 ## System Architecture
 
@@ -33,8 +27,6 @@ A secure and customizable system that allows users to access a WiFi network **on
 3. User logs in or registers and selects an access plan
 4. After successful payment, access is granted for a limited time.
 5. After expiry, access is automatically revoked
-
----
 
 ## Installation
 
