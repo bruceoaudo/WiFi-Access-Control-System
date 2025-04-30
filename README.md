@@ -32,7 +32,7 @@ A secure and customizable system that allows users to access a WiFi network **on
 
 ### 1. Flash router with OpenWRT
 
-Follow instruction at: htttp://openwrt.org/
+Follow instruction at: [OpenWRT website](htttp://openwrt.org/)
 
 ### 2. Set Up captive Portal
 
