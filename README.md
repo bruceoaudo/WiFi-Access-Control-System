@@ -32,7 +32,7 @@ A secure and customizable system that allows users to access a WiFi network **on
 
 ### 1. Flash router with OpenWRT
 
-Follow instruction at: [htttp://openwrt.org/](htttp://openwrt.org/)
+Follow instruction at: [OpenWrt Website](https://openwrt.org/)
 
 ### 2. Set Up captive Portal
 
@@ -80,6 +80,8 @@ This project is licenced under the MIT License.
 
 ## Author
 
-[Bruce Audo]
-[bruceodoyoaudo@gmail.com]
-[https://github.com/bruceoaudo]
+Bruce Audo
+
+bruceodoyoaudo@gmail.com
+
+[Github profile](https://github.com/bruceoaudo)
