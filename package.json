@@ -1,0 +1,24 @@
+{
+  "name": "wifi-access-control-system",
+  "version": "1.0.0",
+  "description": "A secure and customizable system that allows users to access a WiFi network **only after payment**. The system uses a **captive portal**, integrated **payment gateway**, and **access control** logic to manage internet access for users in public or commercial spaces.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bruceoaudo/WiFi-Access-Control-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bruceoaudo/WiFi-Access-Control-System/issues"
+  },
+  "homepage": "https://github.com/bruceoaudo/WiFi-Access-Control-System#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  }
+}
