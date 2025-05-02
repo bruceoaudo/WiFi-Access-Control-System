@@ -4,6 +4,9 @@
   "description": "A secure and customizable system that allows users to access a WiFi network **only after payment**. The system uses a **captive portal**, integrated **payment gateway**, and **access control** logic to manage internet access for users in public or commercial spaces.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,12 +21,17 @@
   },
   "homepage": "https://github.com/bruceoaudo/WiFi-Access-Control-System#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }
 }
