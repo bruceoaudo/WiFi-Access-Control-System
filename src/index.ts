@@ -2,7 +2,10 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import http from 'http';
 import cors from 'cors';
+import LoginRoute from './routes/login'
+import dotenv from 'dotenv'
 
+dotenv.config()
 const app: Application = express();
 const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
@@ -17,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files with cache control
-app.use(express.static(path.join(__dirname, 'public'), {
+app.use(express.static(path.join(process.cwd(), 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0'
 }));
 
@@ -27,6 +30,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // Routes
+app.use('/api/v1/auth', LoginRoute)
 
 
 // Error handling middleware
