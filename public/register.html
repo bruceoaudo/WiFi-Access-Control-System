@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
 
     <!--Styles-->
     <style>
@@ -13,19 +13,21 @@
 <body>
     <!--Header section-->
     <section>
-        <h1>Login</h1>
+        <h1>Register</h1>
     </section>
 
     <!--Main section-->
     <main>
         <form id="formEl">
+            <input id="nameEl" type="text" placeholder="Username" />
             <input id="phoneEl" type="tel" placeholder="Phone number" />
             <input id="passwordEl" type="password" placeholder="Password" />
-            <input type="submit" value="Login" />
+            <input id="confirmPasswordEl" type="password" placeholder="Confirm password" />
+            <input type="submit" value="Register" />
             <p>
-                Don't have an account?
+                Already have an account?
                 <span>
-                    <a href="/register.html">Register</a>
+                    <a href="/index.html">Login</a>
                 </span>
             </p>
         </form>
@@ -33,18 +35,22 @@
 
     <!--Script-->
     <script>
+        const name = document.getElementById("nameEl")
         const phone = document.getElementById("phoneEl")
         const password = document.getElementById("passwordEl")
+        const confirmPassword = document.getElementById("confirmPasswordEl")
 
         document.getElementById("formEl").addEventListener('submit', async (event)=>{
             event.preventDefault()
 
             const data = {
+                name: name.value,
                 phone: phone.value,
-                password: password.value
+                password: password.value,
+                confirmPassword: confirmPassword.value
             }
 
-            const response = await fetch('http://localhost:3000/api/v1/auth/login', {
+            const response = await fetch('http://localhost:3000/api/v1/auth/register', {
                 headers:{
                     'Content-Type':'application/json'
                 },
@@ -53,7 +59,7 @@
 
             if(response.ok){
                 // Redirect to offers page
-                window.location.href = 'offers.html'
+                window.location.href = 'index.html'
             }
         })
     </script>

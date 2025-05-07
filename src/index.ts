@@ -3,6 +3,7 @@ import path from 'path';
 import http from 'http';
 import cors from 'cors';
 import LoginRoute from './routes/login'
+import RegisterRoute from './routes/register'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -31,6 +32,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Routes
 app.use('/api/v1/auth', LoginRoute)
+app.use('/api/v1/auth', RegisterRoute)
 
 
 // Error handling middleware
