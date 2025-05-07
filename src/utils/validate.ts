@@ -1,5 +1,6 @@
 import pool from "./db";
 import { hashPassword, verifyPassword } from "./password";
+import { registerUser } from "./registerUser";
 
 export const validateLoginDetails = async (phone: string, password: string) => {
   // Check for empty inputs
@@ -49,7 +50,11 @@ export const validateRegisterDetails = async (
   phone: string,
   password: string,
   confirmPassword: string
-): Promise<void> => {
+): Promise<{
+  userName: string
+  phoneNumber: string
+  hashedPassword: string
+}> => {
   if (!name || !phone || !password || !confirmPassword) {
     throw new Error("All fields must be filled");
   }
@@ -75,11 +80,12 @@ export const validateRegisterDetails = async (
 
     const hashedPassword = await hashPassword(password);
 
-    // Insert the new user
-    await pool.query(
-      `INSERT INTO USERS (NAME, PHONE, PASSWORD) VALUES ($1, $2, $3)`,
-      [name, phone, hashedPassword]
-    );
+    return {
+      userName: name,
+      phoneNumber: phone,
+      hashedPassword: hashedPassword
+    }
+
   } catch (error: any) {
     throw new Error(error.message)
   }
