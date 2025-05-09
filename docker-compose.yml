@@ -8,13 +8,46 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_USER}
+      POSTGRES_DB: ${POSTGRES_DB_USER}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT_USER}:5432"
     volumes:
       - user_postgres_data:/var/lib/postgresql/data
+  
+  postgres1:
+    image: postgres:16
+    container_name: subscription_plan_postgres_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_SUBCRIPTION_PLAN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_SUBSCRIPTION_PLAN}
+      POSTGRES_DB: ${POSTGRES_DB_SUBSCRIPTION_PLAN}
+    ports:
+      - "${POSTGRES_PORT_SUBSCRIPTION_PLAN}:5433"
+    volumes:
+      - subscription_plan_postgres_data:/var/lib/postgresql/data
+
+  postgres3:
+    image: postgres:16
+    container_name: payment_postgres_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_PAYMENT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PAYMENT}
+      POSTGRES_DB: ${POSTGRES_DB_PAYMENT}
+    ports:
+      - "${POSTGRES_PORT_PAYMENT}:5434"
+    volumes:
+      - payment_postgres_data:/var/lib/postgresql/data
+
 
 volumes:
   user_postgres_data:
+  subscription_plan_postgres_data:
+  payment_postgres_data:

@@ -1,4 +1,4 @@
-import pool from "./db";
+import userPool from "./db";
 import { hashPassword, verifyPassword } from "./password";
 import { registerUser } from "./registerUser";
 
@@ -16,7 +16,7 @@ export const validateLoginDetails = async (phone: string, password: string) => {
     }
 
     // Retrieve user from database (use parameterized query)
-    const result = await pool.query(
+    const result = await userPool.query(
       `SELECT PHONE, PASSWORD FROM USERS WHERE PHONE = $1`,
       [phone]
     );
@@ -69,7 +69,7 @@ export const validateRegisterDetails = async (
       throw new Error("Invalid phone number format");
     }
 
-    const result = await pool.query(
+    const result = await userPool.query(
       `SELECT PHONE FROM USERS WHERE PHONE = $1`,
       [phone]
     );
