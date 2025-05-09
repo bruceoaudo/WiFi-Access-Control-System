@@ -50,3 +50,21 @@ paymentPool.on('connect', () => {
 paymentPool.on('error', (err) => {
   console.error('PostgreSQL connection error:', err);
 });
+
+
+// Admin DB
+export const adminPool = new Pool({
+  user: process.env.POSTGRES_USER_ADMIN,
+  host: process.env.POSTGRES_HOST_ADMIN,
+  database: process.env.POSTGRES_DB_ADMIN,
+  password: process.env.POSTGRES_PASSWORD_ADMIN,
+  port: Number(process.env.POSTGRES_PORT_ADMIN),
+});
+
+paymentPool.on('connect', () => {
+  console.log('Connected to Admin database');
+});
+
+paymentPool.on('error', (err) => {
+  console.error('PostgreSQL connection error:', err);
+});

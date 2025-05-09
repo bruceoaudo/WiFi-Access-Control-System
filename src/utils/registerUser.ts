@@ -1,4 +1,4 @@
-import userPool from "./db";
+import { userPool } from "./db";
 
 export const registerUser = async (name:string, phone:string, password:string) => {
     try {

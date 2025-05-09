@@ -1,6 +1,5 @@
-import userPool from "./db";
+import { userPool } from "./db";
 import { hashPassword, verifyPassword } from "./password";
-import { registerUser } from "./registerUser";
 
 export const validateLoginDetails = async (phone: string, password: string) => {
   // Check for empty inputs

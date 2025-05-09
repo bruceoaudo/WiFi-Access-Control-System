@@ -1,21 +1,20 @@
 import { Request, Response, Router } from "express";
-import { validateLoginDetails } from "../utils/validate";
+import { validateAdminLoginDetails } from "../utils/validateAdminLoginDetails";
 import jwt from "jsonwebtoken";
 
 const router = Router();
-
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-router.post("/login", (req: Request, res: Response) => {
+router.post("/admin-login", (req: Request, res: Response) => {
   (async () => {
     try {
-      const { phone, password } = req.body;
+      const { email, password } = req.body;
 
       // Step 1–3: Validate inputs, user existence, and password
-      const { phoneNumber } = await validateLoginDetails(phone, password);
+      const { emailAddress } = await validateAdminLoginDetails(email, password);
 
       // Step 4: Sign JWT token
-      const token = jwt.sign({ phone: phoneNumber }, JWT_SECRET, {
+      const token = jwt.sign({ email: emailAddress }, JWT_SECRET, {
         expiresIn: "7d",
       });
 

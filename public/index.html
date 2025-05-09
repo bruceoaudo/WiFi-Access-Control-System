@@ -1,141 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
     <title>Login</title>
 
     <!--Styles-->
     <style>
-        *{
-            box-sizing: border-box;
-            margin: 0px;
-            padding: 0px;
-            font-family: "Poppins", sans-serif;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0px;
+        padding: 0px;
+        font-family: "Poppins", sans-serif;
+      }
 
-        body{
-            display: flex;
-            flex-direction: column;
-        }
+      body {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        min-height: 100vh;
+      }
 
-        section{
-             margin-bottom: 50px;
-             height: 100px;
-             background-color: #052e16;
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-             justify-content: center;
-        }
+      section {
+        margin-bottom: 50px;
+        height: 100px;
+        background-color: #052e16;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
-        h1{
-            font-size: 40px;
-            color: white;
-            
-        }
+      h1 {
+        font-size: 40px;
+        color: white;
+      }
 
-        main{
-            align-self: center;
-            font-size: 14px;
-        }
+      main {
+        align-self: center;
+        font-size: 14px;
+      }
 
-        form{
-            display: flex;
-            flex-direction: column;
-            width: 400px;
-        }
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 400px;
+      }
 
-        input{
-            margin-bottom: 10px;
-            height: 60px;
-            border-radius: 5px;
-            width: 100%;
-            border: 1px solid black;
-            text-indent: 12px;
-            font-size: 14px;
-        }
+      input {
+        margin-bottom: 10px;
+        height: 60px;
+        border-radius: 5px;
+        width: 100%;
+        border: 1px solid black;
+        text-indent: 12px;
+        font-size: 14px;
+      }
 
-        input:focus{
-            border: 2px solid #052e16;
-            outline: none;
-        }
+      input:focus {
+        border: 2px solid #052e16;
+        outline: none;
+      }
 
-        input[type="submit"]{
-            background-color: #052e16;
-            color: white;
-            border: none;
-            margin-bottom: 20px;
-        }
+      input[type="submit"] {
+        background-color: #052e16;
+        color: white;
+        border: none;
+        margin-bottom: 20px;
+      }
 
-        input[type="submit"]:hover{
-            opacity: 85%;
-            cursor: pointer;
-        }
+      input[type="submit"]:hover {
+        opacity: 85%;
+        cursor: pointer;
+      }
 
-        a {
-            color: #052e16;
-        }
+      a {
+        color: #052e16;
+      }
 
-        a:visited{
-            color: #052e16;
-        }
+      a:visited {
+        color: #052e16;
+      }
 
-        p{
-            text-align: center;
-        }
-        
+      p {
+        text-align: center;
+      }
+
+      #error {
+        width: 300px;
+        border-radius: 5px;
+        height: 60px;
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        border: 1px solid gray;
+        color: white;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+        background-color: #f87171;
+        transition: opacity 0.5s ease-in-out;
+        opacity: 0;
+      }
+
+      #success {
+        width: 300px;
+        border-radius: 5px;
+        height: 60px;
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        border: 1px solid gray;
+        color: white;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 12px;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+        background-color: #86efac;
+        transition: opacity 0.5s ease-in-out;
+        opacity: 0;
+      }
+
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!--Header section-->
     <section>
-        <h1>Login</h1>
+      <h1>Login</h1>
     </section>
 
     <!--Main section-->
     <main>
-        <form id="formEl">
-            <input id="phoneEl" type="tel" placeholder="Phone number" />
-            <input id="passwordEl" type="password" placeholder="Password" />
-            <input type="submit" value="Login" />
-            <p>
-                Don't have an account?
-                <span>
-                    <a href="/register.html">Register</a>
-                </span>
-            </p>
-        </form>
+      <form id="formEl">
+        <input id="phoneEl" type="tel" placeholder="Phone number" />
+        <input id="passwordEl" type="password" placeholder="Password" />
+        <input type="submit" value="Login" />
+        <p>
+          Don't have an account?
+          <span>
+            <a href="/register.html">Register</a>
+          </span>
+        </p>
+      </form>
     </main>
+    <div id="error"></div>
+
+    <div id="success"></div>
 
     <!--Script-->
     <script>
-        const phone = document.getElementById("phoneEl")
-        const password = document.getElementById("passwordEl")
+      const phone = document.getElementById("phoneEl");
+      const password = document.getElementById("passwordEl");
+      const error = document.getElementById("error");
+      const success = document.getElementById("success");
 
-        document.getElementById("formEl").addEventListener('submit', async (event)=>{
-            event.preventDefault()
+      document
+        .getElementById("formEl")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-            const data = {
-                phone: phone.value,
-                password: password.value
+          if (!phone.value || !password.value) {
+            showError("All fields are required");
+            return;
+          }
+
+          const data = {
+            phone: phone.value,
+            password: password.value,
+          };
+
+          const response = await fetch(
+            "http://localhost:3000/api/v1/auth/login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
             }
+          );
 
-            const response = await fetch('http://localhost:3000/api/v1/auth/login', {
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify(data)
-            })
+          const result = await response.json();
 
-            if(response.ok){
-                // Redirect to offers page
-                window.location.href = 'offers.html'
-            }
-        })
+          if (!response.ok) {
+            showError(result.error);
+            return;
+          }
+
+          showSuccess(result.message);
+          // Redirect to offers page
+          setTimeout(() => {
+            window.location.href = "offers.html";
+          }, 3000);
+        });
+
+      const showError = (message) => {
+        error.innerHTML = `<p>${message}</p>`;
+        error.style.opacity = '1'
+
+        setTimeout(() => {
+          error.style.opacity = '0'
+        }, 3000);
+      };
+
+      const showSuccess = (message) => {
+        success.innerHTML = `<p>${message}</p>`;
+        success.style.opacity = '1'
+
+        setTimeout(() => {
+          success.style.opacity = '0'
+        }, 3000);
+      };
     </script>
-</body>
+  </body>
 </html>

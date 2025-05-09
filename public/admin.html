@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <title>Register</title>
+    <title>Admin Login</title>
 
     <!--Styles-->
     <style>
@@ -76,18 +76,6 @@
             cursor: pointer;
         }
 
-        a {
-            color: #052e16;
-        }
-
-        a:visited{
-            color: #052e16;
-        }
-
-        p{
-            text-align: center;
-        }
-
         #error {
         width: 300px;
         border-radius: 5px;
@@ -135,23 +123,15 @@
 <body>
     <!--Header section-->
     <section>
-        <h1>Register</h1>
+        <h1>Login</h1>
     </section>
 
     <!--Main section-->
     <main>
         <form id="formEl">
-            <input id="nameEl" type="text" placeholder="Username" />
-            <input id="phoneEl" type="tel" placeholder="Phone number" />
+            <input id="emailEl" type="email" placeholder="Email address" />
             <input id="passwordEl" type="password" placeholder="Password" />
-            <input id="confirmPasswordEl" type="password" placeholder="Confirm password" />
-            <input type="submit" value="Register" />
-            <p>
-                Already have an account?
-                <span>
-                    <a href="/index.html">Login</a>
-                </span>
-            </p>
+            <input type="submit" value="Login" />
         </form>
     </main>
 
@@ -161,34 +141,32 @@
 
     <!--Script-->
     <script>
-        const name = document.getElementById("nameEl")
-        const phone = document.getElementById("phoneEl")
+        const email = document.getElementById("emailEl")
         const password = document.getElementById("passwordEl")
-        const confirmPassword = document.getElementById("confirmPasswordEl")
         const error = document.getElementById("error");
         const success = document.getElementById("success");
 
         document.getElementById("formEl").addEventListener('submit', async (event)=>{
             event.preventDefault()
 
-            if (!name.value || !phone.value || !password.value || !confirmPassword.value) {
+            if (!email.value || !password.value) {
             showError("All fields are required");
             return;
           }
 
             const data = {
-                name: name.value,
-                phone: phone.value,
-                password: password.value,
-                confirmPassword: confirmPassword.value
+                email: email.value,
+                password: password.value
             }
 
-            const response = await fetch('http://localhost:3000/api/v1/auth/register', {
+            const response = await fetch('http://localhost:3000/api/v1/auth/admin-login', {
                 headers:{
                     'Content-Type':'application/json'
                 },
                 body: JSON.stringify(data)
             })
+
+            const result = await response.json();
 
             if(!response.ok){
                 showError(result.error);
@@ -196,11 +174,12 @@
             }
 
             showSuccess(result.message);
-            // Redirect to offers page
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 3000);
-            })
+          // Redirect to offers page
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 3000);
+
+        })
     </script>
 </body>
 </html>
