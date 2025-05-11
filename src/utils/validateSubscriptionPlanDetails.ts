@@ -1,4 +1,4 @@
-import { adminPool } from "./db";
+import { db } from "./db";
 
 export const validateSubscriptionPlanDetails = async (
   offer_name: string,
@@ -15,8 +15,8 @@ export const validateSubscriptionPlanDetails = async (
   try {
 
     // Retrieve user from database (use parameterized query)
-    const result = await adminPool.query(
-      `SELECT EMAIL, PASSWORD FROM ADMIN WHERE EMAIL = $1`,
+    const result = await db.query(
+      `SELECT EMAIL, PASSWORD FROM admin WHERE EMAIL = $1`,
       [adminEmail]
     );
 

@@ -1,4 +1,4 @@
-import { adminPool } from "./db";
+import { db } from "./db";
 import { verifyPassword } from "./password";
 
 export const validateAdminLoginDetails = async (email: string, password: string) => {
@@ -15,8 +15,8 @@ export const validateAdminLoginDetails = async (email: string, password: string)
     }
 
     // Retrieve user from database (use parameterized query)
-    const result = await adminPool.query(
-      `SELECT EMAIL, PASSWORD FROM ADMIN WHERE EMAIL = $1`,
+    const result = await db.query(
+      `SELECT EMAIL, PASSWORD FROM admin WHERE EMAIL = $1`,
       [email]
     );
 

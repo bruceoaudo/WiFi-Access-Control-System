@@ -5,11 +5,16 @@ import cors from 'cors';
 import LoginRoute from './routes/login'
 import RegisterRoute from './routes/register'
 import dotenv from 'dotenv'
+import { createTables } from './utils/db';
 
 dotenv.config()
 const app: Application = express();
 const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
+
+(async () => {
+  await createTables()
+})()
 
 
 // Middleware

@@ -1,4 +1,4 @@
-import { userPool } from "./db";
+import { db } from "./db";
 import { hashPassword, verifyPassword } from "./password";
 
 export const validateLoginDetails = async (phone: string, password: string) => {
@@ -16,8 +16,8 @@ export const validateLoginDetails = async (phone: string, password: string) => {
     }
 
     // Retrieve user from database (use parameterized query)
-    const result = await userPool.query(
-      `SELECT PHONE, PASSWORD FROM USERS WHERE PHONE = $1`,
+    const result = await db.query(
+      `SELECT phonenumber, password FROM users WHERE phonenumber = $1`,
       [phone]
     );
 
@@ -64,18 +64,19 @@ export const validateRegisterDetails = async (
   }
 
   try {
+    // Basic phone validation
     const phoneRegex = /^\d{10,}$/;
     if (!phoneRegex.test(phone)) {
       throw new Error("Invalid phone number format");
     }
 
-    const result = await userPool.query(
-      `SELECT PHONE FROM USERS WHERE PHONE = $1`,
+    const result = await db.query(
+      `SELECT phonenumber FROM users WHERE phonenumber = $1`,
       [phone]
     );
 
     if (result.rows.length > 0) {
-      throw new Error("User with this phone number is already registered.");
+      throw new Error("User already registered.");
     }
 
     const hashedPassword = await hashPassword(password);
@@ -83,9 +84,8 @@ export const validateRegisterDetails = async (
     return {
       userName: name,
       phoneNumber: phone,
-      hashedPassword: hashedPassword
-    }
-
+      hashedPassword: hashedPassword,
+    };
   } catch (error: any) {
     throw new Error(error.message)
   }
