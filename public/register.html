@@ -201,6 +201,24 @@
                 window.location.href = "index.html";
             }, 3000);
             })
+
+             const showError = (message) => {
+        error.innerHTML = `<p>${message}</p>`;
+        error.style.opacity = '1'
+
+        setTimeout(() => {
+          error.style.opacity = '0'
+        }, 3000);
+      };
+
+      const showSuccess = (message) => {
+        success.innerHTML = `<p>${message}</p>`;
+        success.style.opacity = '1'
+
+        setTimeout(() => {
+          success.style.opacity = '0'
+        }, 3000);
+      };
     </script>
 </body>
 </html>

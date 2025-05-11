@@ -1,1 +1,137 @@
-<h1>Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>Dashboard - Admin</title>
+
+    <!--Styles-->
+    <style>
+
+        *{
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 0px;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body{
+            display: flex;
+            flex-direction: column;
+        }
+
+        #top-section{
+            width: 100vw;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-bottom: 1px solid gray;
+        }
+
+        #top-nav{
+            height: 100%;
+            background-color: #052e16;
+            color: white;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        #bottom-section{
+            display: flex;
+            flex-direction: row;
+            margin-top: 60px;
+            width: 100vw;
+        }
+
+        #side-nav{
+            width: 60px;
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            border-right: 1px solid gray;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        main{
+            margin-left: 60px;
+            width: calc(100vw - 60px);
+        }
+
+        #top-main-fixed{
+            position: fixed;
+            height: 150px;
+            border-bottom: 1px solid gray;
+            right: 0;
+            left: 60px;
+            padding: 10px;
+        }
+
+        #bottom-main-scrollable{
+            margin-top: 150px;
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <section id="top-section">
+        <!--Top Nav(Fixed)-->
+        <nav id="top-nav">
+            Top nav
+        </nav>
+    </section>
+
+    <section id="bottom-section">
+        <!--Side Nav (Fixed)-->
+        <nav id="side-nav">
+            Side
+        </nav>
+        <!--Main section-->
+        <main>
+            <!--Fixed top part-->
+            <div id="top-main-fixed">
+                Top main
+            </div>
+            <!--Scrollabe-->
+            <div id="bottom-main-scrollable">
+                Subscription plans list
+            </div>
+        </main>
+    </section>
+
+   <!--Script-->
+    <script>
+
+        const fetchOffers = async ()=>{
+            const response = await fetch(
+            "http://localhost:3000/api/v1/admin/offers/get-plans",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              }
+            }
+          );
+
+          const result = await response.json();
+
+          console.log(result)
+        }
+
+        window.onload = await fetchOffers
+
+    </script>
+</body>
+</html>

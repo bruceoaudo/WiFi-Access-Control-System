@@ -177,6 +177,12 @@
             return;
           }
 
+          // Basic phone validation
+          const phoneRegex = /^\d{10,}$/;
+          if (!phoneRegex.test(phone)) {
+            showError("Invalid phone number format");
+          }
+
           const data = {
             phone: phone.value,
             password: password.value,

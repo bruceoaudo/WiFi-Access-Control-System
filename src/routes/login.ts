@@ -29,6 +29,7 @@ router.post("/login", (req: Request, res: Response) => {
 
       return res.status(200).json({ message: "Login successful" });
     } catch (err: any) {
+      console.log(err)
       return res
         .status(401)
         .json({ error: err.message || "Invalid credentials" });

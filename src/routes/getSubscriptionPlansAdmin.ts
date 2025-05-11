@@ -3,7 +3,7 @@ import { authenticateAdmin } from "../middlewares/authenticateAdmin";
 
 const router = Router()
 
-router.post('/get-plans', authenticateAdmin, (req: Request, res: Response) => {
+router.get('/get-plans', authenticateAdmin, (req: Request, res: Response) => {
 
     (async () => {
 

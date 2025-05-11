@@ -11,6 +11,7 @@ const app: Application = express();
 const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 
+
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'development' 

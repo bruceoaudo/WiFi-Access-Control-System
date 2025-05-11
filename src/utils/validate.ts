@@ -2,6 +2,7 @@ import { userPool } from "./db";
 import { hashPassword, verifyPassword } from "./password";
 
 export const validateLoginDetails = async (phone: string, password: string) => {
+  
   // Check for empty inputs
   if (!phone || !password) {
     throw new Error("All fields must be filled");
