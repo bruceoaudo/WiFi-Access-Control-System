@@ -4,11 +4,16 @@ import http from 'http';
 import cors from 'cors';
 import LoginRoute from './routes/login'
 import RegisterRoute from './routes/register'
+import AdminLoginRoute from './routes/adminLogin'
+import AdminRegisterRoute from './routes/adminRegister'
+import GetPlansRoute from './routes/getSubscriptionPlansAdmin'
 import dotenv from 'dotenv'
+import cookieParser from "cookie-parser";
 import { createTables } from './utils/db';
 
 dotenv.config()
 const app: Application = express();
+app.use(cookieParser())
 const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 
@@ -39,6 +44,9 @@ app.get('/health', (req: Request, res: Response) => {
 // Routes
 app.use('/api/v1/auth', LoginRoute)
 app.use('/api/v1/auth', RegisterRoute)
+app.use('/api/v1/admin', GetPlansRoute)
+app.use('/api/v1/admin', AdminLoginRoute)
+app.use('/api/v1/admin', AdminRegisterRoute)
 
 
 // Error handling middleware

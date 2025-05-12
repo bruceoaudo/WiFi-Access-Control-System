@@ -10,6 +10,14 @@ export interface AuthenticatedAdminRequest extends Request {
   admin?: { email: string };
 }
 
+declare module "express-serve-static-core" {
+  interface Request {
+    admin?: {
+      email: string;
+    };
+  }
+}
+
 export const authenticateAdmin = (
   req: AuthenticatedAdminRequest,
   res: Response,
@@ -19,7 +27,8 @@ export const authenticateAdmin = (
     const token = req.cookies?.token;
 
     if (!token) {
-      return res.status(401).json({ error: "Authentication token missing" });
+      res.status(401).json({ error: "Authentication token missing" });
+      return
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
@@ -27,6 +36,6 @@ export const authenticateAdmin = (
     req.admin = { email: decoded.email };
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Invalid or expired token" });
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 };

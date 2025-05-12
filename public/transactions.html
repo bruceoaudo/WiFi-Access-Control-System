@@ -13,10 +13,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <title>Dashboard - Admin</title>
-
-    <!--Styles-->
+    <title>Transactions</title>
     <style>
+      /* All the same styles as dashboard */
       * {
         box-sizing: border-box;
         margin: 0px;
@@ -48,14 +47,13 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: 0 30px;
+        padding: 0 20px;
       }
 
       #top-nav-right {
         display: flex;
         align-items: center;
         gap: 20px;
-        padding-right: 10px;
       }
 
       #bottom-section {
@@ -75,7 +73,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 30px 0;
+        padding: 10px 0;
         gap: 25px;
         background-color: white;
         z-index: 90;
@@ -118,7 +116,7 @@
       #dashboard-title {
         font-size: 1.8rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #e90000;
         margin-bottom: 15px;
       }
 
@@ -146,11 +144,11 @@
       .stat-value {
         font-size: 1.5rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #e90000;
       }
 
       #bottom-main-scrollable {
-        margin-top: 180px;
+        margin-top: 150px;
         padding: 20px;
         background-color: #f8fafc;
         min-height: calc(100vh - 210px);
@@ -159,7 +157,7 @@
       .section-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #e90000;
         margin-bottom: 20px;
       }
 
@@ -188,13 +186,13 @@
       .plan-name {
         font-size: 1.2rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #e90000;
       }
 
       .plan-price {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #1A1A1A;
+        color: #065f46;
       }
 
       .plan-duration {
@@ -215,7 +213,7 @@
       }
 
       .plan-features li i {
-        color: #1A1A1A;
+        color: #065f46;
       }
 
       .plan-actions {
@@ -239,7 +237,7 @@
       }
 
       .btn-primary:hover {
-        background-color: #1A1A1A;
+        background-color: #064e3b;
       }
 
       .btn-secondary {
@@ -252,7 +250,7 @@
       }
 
       .popular-tag {
-        background-color: #FFC107;
+        background-color: #f59e0b;
         color: white;
         padding: 3px 8px;
         border-radius: 12px;
@@ -260,11 +258,89 @@
         font-weight: 600;
         margin-left: 10px;
       }
+
+      #page-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #e90000;
+        margin-bottom: 15px;
+      }
+
+      .transactions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .date-filter {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .transactions-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .summary-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .summary-label {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+      }
+
+      .summary-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #e90000;
+      }
+
+      .transactions-table {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #bottom-main-scrollable {
+        margin-top: 230px;
+        padding: 20px;
+        background-color: #f8fafc;
+        min-height: calc(100vh - 210px);
+      }
+
+      /* Table styles same as user management */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #e90000;
+      }
     </style>
   </head>
   <body>
     <section id="top-section">
-      <!--Top Nav(Fixed)-->
       <nav id="top-nav">
         <div>WiFi Access Control Admin</div>
         <div id="top-nav-right">
@@ -275,153 +351,79 @@
     </section>
 
     <section id="bottom-section">
-      <!--Side Nav (Fixed)-->
       <nav id="side-nav">
-        <i
-          class="fas fa-tachometer-alt nav-icon active"
-          title="Dashboard"
-          onclick="window.open('dashboard.html', '_blank')"
-        ></i>
-        <i
-          class="fas fa-users nav-icon"
-          title="User Management"
-          onclick="window.open('users.html', '_blank')"
-        ></i>
-        <i
-          class="fas fa-tag nav-icon"
-          title="Plans & Offers"
-          onclick="window.open('plans.html', '_blank')"
-        ></i>
-        <i
-          class="fas fa-network-wired nav-icon"
-          title="Network Monitoring"
-          onclick="window.open('network.html', '_blank')"
-        ></i>
-        <i
-          class="fas fa-receipt nav-icon"
-          title="Transactions"
-          onclick="window.open('transactions.html', '_blank')"
-        ></i>
-        <i
-          class="fas fa-cog nav-icon"
-          title="Settings"
-          onclick="window.open('settings.html', '_blank')"
-        ></i>
-        <i
-          class="fas fa-chart-bar nav-icon"
-          title="Reports"
-          onclick="window.open('reports.html', '_blank')"
-        ></i>
+        <i class="fas fa-tachometer-alt nav-icon" title="Dashboard"></i>
+        <i class="fas fa-users nav-icon" title="User Management"></i>
+        <i class="fas fa-tag nav-icon" title="Plans & Offers"></i>
+        <i class="fas fa-network-wired nav-icon" title="Network Monitoring"></i>
+        <i class="fas fa-receipt nav-icon active" title="Transactions"></i>
+        <i class="fas fa-cog nav-icon" title="Settings"></i>
+        <i class="fas fa-chart-bar nav-icon" title="Reports"></i>
       </nav>
-      <!--Main section-->
+
       <main>
-        <!--Fixed top part-->
         <div id="top-main-fixed">
-          <h1 id="dashboard-title">Dashboard Overview</h1>
-          <div class="stats-container">
-            <div class="stat-card">
-              <span class="stat-title">Active Users</span>
-              <span class="stat-value">24</span>
+          <h1 id="page-title">Transactions</h1>
+          <div class="transactions-header">
+            <div class="date-filter">
+              <input type="date" />
+              <span>to</span>
+              <input type="date" />
+              <button class="btn btn-primary">Filter</button>
             </div>
-            <div class="stat-card">
-              <span class="stat-title">Today's Revenue</span>
-              <span class="stat-value">KES 3,450</span>
+            <button class="btn btn-primary">Export CSV</button>
+          </div>
+
+          <div class="transactions-summary">
+            <div class="summary-card">
+              <div class="summary-label">Total Revenue</div>
+              <div class="summary-value">KES 24,500</div>
             </div>
-            <div class="stat-card">
-              <span class="stat-title">Network Usage</span>
-              <span class="stat-value">62%</span>
+            <div class="summary-card">
+              <div class="summary-label">Successful Transactions</div>
+              <div class="summary-value">128</div>
             </div>
-            <div class="stat-card">
-              <span class="stat-title">New Signups</span>
-              <span class="stat-value">8</span>
+            <div class="summary-card">
+              <div class="summary-label">Failed Transactions</div>
+              <div class="summary-value">5</div>
             </div>
           </div>
         </div>
-        <!--Scrollabe-->
-        <div id="bottom-main-scrollable">
-          <h2 class="section-title">Subscription Plans</h2>
-          <div id="plans-container" class="plans-container">
-            <div id="plans-div"></div>
 
-            <!-- Add New Plan Card -->
-            <div
-            id="plan-card"
-              class="plan-card"
-              style="
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-              "
-            >
-              <i
-                class="fas fa-plus-circle"
-                style="font-size: 2rem; color: #e90000"
-              ></i>
-              <div style="font-weight: 600; margin-top: 10px">Add New Plan</div>
-            </div>
+        <div id="bottom-main-scrollable">
+          <div class="transactions-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Transaction ID</th>
+                  <th>User</th>
+                  <th>Plan</th>
+                  <th>Amount</th>
+                  <th>Payment Method</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TXN1001</td>
+                  <td>John Doe</td>
+                  <td>Daily Pass</td>
+                  <td>KES 200</td>
+                  <td>MPesa</td>
+                  <td>2023-12-14 10:30</td>
+                  <td class="status-active">Completed</td>
+                </tr>
+                <!-- More transactions would be listed here -->
+              </tbody>
+            </table>
           </div>
         </div>
       </main>
     </section>
 
-    <!--Script-->
     <script>
-      const fetchOffers = async () => {
-        try {
-          const response = await fetch(
-            "http://localhost:3000/api/v1/admin/get-plans",
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const result = await response.json();
-
-          if(result.length === 0){
-            document.getElementById('plans-container').style="grid-template-columns: 300px;"
-            document.getElementById('plan-card').style="height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s ease;"
-            document.getElementById('plan-card').addEventListener('mouseenter', ()=>{
-              document.getElementById('plan-card').style.transform = 'translateY(-10px)';
-            })
-            document.getElementById('plan-card').addEventListener('mouseleave', ()=>{
-              document.getElementById('plan-card').style.transform = 'translateY(0)';
-            })
-          } else{
-            document.getElementById('plans-div').innerHTML = `
-              <!-- Plan 1 -->
-            <div class="plan-card">
-              <div class="plan-header">
-                <span class="plan-name"
-                  >Hourly Pass <span class="popular-tag">POPULAR</span></span
-                >
-                <span class="plan-price">KES 50</span>
-              </div>
-              <span class="plan-duration">1 hour access</span>
-              <ul class="plan-features">
-                <li><i class="fas fa-check"></i> High-speed connection</li>
-                <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-                <li><i class="fas fa-check"></i> One device only</li>
-              </ul>
-              <div class="plan-actions">
-                <button class="btn btn-primary">Edit Plan</button>
-                <button class="btn btn-secondary">Deactivate</button>
-              </div>
-            </div>
-            `
-          }
-          
-
-        } catch (error) {
-          console.error("Error fetching offers:", error);
-        }
-      };
-
-      document.addEventListener("DOMContentLoaded", () => {
-        fetchOffers();
-      });
+      // Same navigation script as dashboard
     </script>
   </body>
 </html>

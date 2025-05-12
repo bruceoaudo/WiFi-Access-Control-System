@@ -10,6 +10,14 @@ export interface AuthenticatedUserRequest extends Request {
   user?: { phone: string };
 }
 
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: {
+      phone: string;
+    };
+  }
+}
+
 export const authenticateUser = (
   req: AuthenticatedUserRequest,
   res: Response,
@@ -19,7 +27,8 @@ export const authenticateUser = (
     const token = req.cookies?.token;
 
     if (!token) {
-      return res.status(401).json({ error: "Authentication token missing" });
+      res.status(401).json({ error: "Authentication token missing" });
+      return
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as { phone: string };
@@ -27,6 +36,6 @@ export const authenticateUser = (
     req.user = { phone: decoded.phone };
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Invalid or expired token" });
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 };

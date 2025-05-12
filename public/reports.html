@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Reports</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0px;
+        padding: 0px;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      #top-section {
+        width: 100vw;
+        height: 60px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        border-bottom: 1px solid gray;
+        z-index: 100;
+      }
+
+      #top-nav {
+        height: 100%;
+        background-color: #e90000;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+      }
+
+      #top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      #bottom-section {
+        display: flex;
+        flex-direction: row;
+        margin-top: 60px;
+        width: 100vw;
+      }
+
+      #side-nav {
+        width: 60px;
+        position: fixed;
+        left: 0;
+        top: 60px;
+        bottom: 0;
+        border-right: 1px solid gray;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+        gap: 25px;
+        background-color: white;
+        z-index: 90;
+      }
+
+      .nav-icon {
+        color: #e90000;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .nav-icon:hover {
+        background-color: #e5e7eb;
+      }
+
+      .nav-icon.active {
+        background-color: #e90000;
+        color: white;
+      }
+
+      main {
+        margin-left: 60px;
+        width: calc(100vw - 60px);
+      }
+
+      #top-main-fixed {
+        position: fixed;
+        height: 150px;
+        border-bottom: 1px solid gray;
+        right: 0;
+        left: 60px;
+        padding: 20px;
+        background-color: white;
+        z-index: 80;
+      }
+
+      #page-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #e90000;
+        margin-bottom: 15px;
+      }
+
+      #bottom-main-scrollable {
+        margin-top: 150px;
+        padding: 20px;
+        background-color: #f8fafc;
+        min-height: calc(100vh - 210px);
+      }
+
+      /* Reports Specific Styles */
+      .reports-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .report-filters {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .date-filter {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background-color: #e90000;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #064e3b;
+      }
+
+      .btn-secondary {
+        background-color: #e5e7eb;
+        color: #1f2937;
+      }
+
+      .btn-secondary:hover {
+        background-color: #d1d5db;
+      }
+
+      .reports-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+      }
+
+      .report-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        min-height: 300px;
+      }
+
+      .report-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #e90000;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .report-content {
+        height: calc(100% - 30px);
+        background-color: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .chart-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+      }
+
+      .report-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .stat-item {
+        background-color: #f8fafc;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+
+      .stat-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #e90000;
+      }
+
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      .report-table th,
+      .report-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .report-table th {
+        background-color: #f8fafc;
+        font-weight: 600;
+      }
+
+      .export-options {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="top-section">
+      <nav id="top-nav">
+        <div>WiFi Access Control Admin</div>
+        <div id="top-nav-right">
+          <span><i class="fas fa-bell"></i></span>
+          <span><i class="fas fa-user-circle"></i> Admin</span>
+        </div>
+      </nav>
+    </section>
+
+    <section id="bottom-section">
+      <nav id="side-nav">
+        <i class="fas fa-tachometer-alt nav-icon" title="Dashboard"></i>
+        <i class="fas fa-users nav-icon" title="User Management"></i>
+        <i class="fas fa-tag nav-icon" title="Plans & Offers"></i>
+        <i class="fas fa-network-wired nav-icon" title="Network Monitoring"></i>
+        <i class="fas fa-receipt nav-icon" title="Transactions"></i>
+        <i class="fas fa-cog nav-icon" title="Settings"></i>
+        <i class="fas fa-chart-bar nav-icon active" title="Reports"></i>
+      </nav>
+
+      <main>
+        <div id="top-main-fixed">
+          <h1 id="page-title">Analytics Reports</h1>
+          <div class="reports-header">
+            <div class="report-filters">
+              <div class="date-filter">
+                <input type="date" class="form-control" />
+                <span>to</span>
+                <input type="date" class="form-control" />
+                <button class="btn btn-primary">Apply</button>
+              </div>
+              <select class="form-control">
+                <option>All Plans</option>
+                <option>Hourly Pass</option>
+                <option>Daily Pass</option>
+                <option>Weekly Pass</option>
+                <option>Monthly Pass</option>
+              </select>
+            </div>
+            <div class="export-options">
+              <button class="btn btn-secondary">
+                <i class="fas fa-file-pdf"></i> PDF
+              </button>
+              <button class="btn btn-secondary">
+                <i class="fas fa-file-excel"></i> Excel
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="bottom-main-scrollable">
+          <div class="reports-container">
+            <!-- Revenue Report -->
+            <div class="report-card">
+              <div class="report-title">
+                <span>Revenue Overview</span>
+                <span><i class="fas fa-ellipsis-h"></i></span>
+              </div>
+              <div class="report-content">
+                <div class="chart-placeholder">
+                  [Revenue Chart - Last 30 Days]
+                </div>
+              </div>
+              <div class="report-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Total Revenue</div>
+                  <div class="stat-value">KES 45,200</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Avg. Daily</div>
+                  <div class="stat-value">KES 1,507</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Growth</div>
+                  <div class="stat-value" style="color: #065f46">+12.5%</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Refunds</div>
+                  <div class="stat-value">KES 1,200</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- User Acquisition -->
+            <div class="report-card">
+              <div class="report-title">
+                <span>User Acquisition</span>
+                <span><i class="fas fa-ellipsis-h"></i></span>
+              </div>
+              <div class="report-content">
+                <div class="chart-placeholder">[User Growth Chart]</div>
+              </div>
+              <div class="report-stats">
+                <div class="stat-item">
+                  <div class="stat-label">New Users</div>
+                  <div class="stat-value">84</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Returning</div>
+                  <div class="stat-value">36%</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Avg. Session</div>
+                  <div class="stat-value">42 min</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Top Plan</div>
+                  <div class="stat-value">Daily Pass</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plan Performance -->
+            <div class="report-card">
+              <div class="report-title">
+                <span>Plan Performance</span>
+                <span><i class="fas fa-ellipsis-h"></i></span>
+              </div>
+              <div class="report-content">
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>Plan</th>
+                      <th>Sales</th>
+                      <th>Revenue</th>
+                      <th>% Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Hourly Pass</td>
+                      <td>45</td>
+                      <td>KES 2,250</td>
+                      <td>15%</td>
+                    </tr>
+                    <tr>
+                      <td>Daily Pass</td>
+                      <td>72</td>
+                      <td>KES 14,400</td>
+                      <td>48%</td>
+                    </tr>
+                    <tr>
+                      <td>Weekly Pass</td>
+                      <td>28</td>
+                      <td>KES 28,000</td>
+                      <td>28%</td>
+                    </tr>
+                    <tr>
+                      <td>Monthly Pass</td>
+                      <td>12</td>
+                      <td>KES 42,000</td>
+                      <td>9%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Device Usage -->
+            <div class="report-card">
+              <div class="report-title">
+                <span>Device Usage</span>
+                <span><i class="fas fa-ellipsis-h"></i></span>
+              </div>
+              <div class="report-content">
+                <div class="chart-placeholder">
+                  [Device Distribution Pie Chart]
+                </div>
+              </div>
+              <div class="report-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Mobile</div>
+                  <div class="stat-value">68%</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Desktop</div>
+                  <div class="stat-value">22%</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Tablet</div>
+                  <div class="stat-value">8%</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Other</div>
+                  <div class="stat-value">2%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const navIcons = document.querySelectorAll(".nav-icon");
+        navIcons.forEach((icon) => {
+          icon.addEventListener("click", (e) => {
+            e.preventDefault();
+            navIcons.forEach((i) => i.classList.remove("active"));
+            icon.classList.add("active");
+            const title = icon.getAttribute("title");
+            const pageName = title.toLowerCase().replace(" ", "-");
+            if (pageName !== "reports") {
+              window.open(`${pageName}.html`, "_blank");
+            }
+          });
+        });
+
+        // In a real implementation, you would fetch report data here
+        // and render charts using a library like Chart.js
+      });
+    </script>
+  </body>
+</html>
