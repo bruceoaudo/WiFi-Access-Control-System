@@ -118,7 +118,7 @@
       #dashboard-title {
         font-size: 1.8rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #1a1a1a;
         margin-bottom: 15px;
       }
 
@@ -146,7 +146,7 @@
       .stat-value {
         font-size: 1.5rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #1a1a1a;
       }
 
       #bottom-main-scrollable {
@@ -159,13 +159,13 @@
       .section-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #1a1a1a;
         margin-bottom: 20px;
       }
 
       .plans-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
         gap: 20px;
       }
 
@@ -188,13 +188,13 @@
       .plan-name {
         font-size: 1.2rem;
         font-weight: 600;
-        color: #1A1A1A;
+        color: #1a1a1a;
       }
 
       .plan-price {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #1A1A1A;
+        color: #1a1a1a;
       }
 
       .plan-duration {
@@ -215,7 +215,7 @@
       }
 
       .plan-features li i {
-        color: #1A1A1A;
+        color: #1a1a1a;
       }
 
       .plan-actions {
@@ -239,7 +239,7 @@
       }
 
       .btn-primary:hover {
-        background-color: #1A1A1A;
+        background-color: #1a1a1a;
       }
 
       .btn-secondary {
@@ -252,7 +252,7 @@
       }
 
       .popular-tag {
-        background-color: #FFC107;
+        background-color: #ffc107;
         color: white;
         padding: 3px 8px;
         border-radius: 12px;
@@ -262,6 +262,165 @@
       }
     </style>
   </head>
+
+  <!-- Modal -->
+  <div
+    id="newPlanModal"
+    style="
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      overflow-y: auto;
+    "
+  >
+    <div
+      style="
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        margin: 50px auto; /* adds spacing from top/bottom when scrolling */
+        position: relative;
+      "
+    >
+      <span
+        id="closeModalBtn"
+        style="
+          position: absolute;
+          top: 10px;
+          right: 15px;
+          font-size: 1.2rem;
+          cursor: pointer;
+        "
+        >&times;</span
+      >
+
+      <h2 style="margin-bottom: 20px; margin-top: 200px">Create New Plan</h2>
+
+      <form id="newPlanForm">
+        <!-- Plan Name -->
+        <div style="margin-bottom: 15px">
+          <label for="planName">Plan Name</label><br />
+          <input
+            type="text"
+            id="planName"
+            name="planName"
+            required
+            style="
+              width: 100%;
+              padding: 8px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+              height: 60px;
+            "
+          />
+        </div>
+
+        <!-- Plan Description -->
+        <div style="margin-bottom: 15px">
+          <label for="planDescription">Description</label><br />
+          <textarea
+            id="planDescription"
+            name="planDescription"
+            rows="3"
+            style="
+              width: 100%;
+              padding: 8px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+            "
+          ></textarea>
+        </div>
+
+        <!-- Price -->
+        <div style="margin-bottom: 15px">
+          <label for="planPrice">Price (KES)</label><br />
+          <input
+            type="number"
+            id="planPrice"
+            name="planPrice"
+            step="0.01"
+            required
+            style="
+              width: 100%;
+              padding: 8px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+              height: 60px;
+            "
+          />
+        </div>
+
+        <!-- Duration -->
+        <div style="margin-bottom: 15px">
+          <label for="planDuration">Duration (e.g., 1 hour, 30 minutes)</label
+          ><br />
+          <input
+            type="text"
+            id="planDuration"
+            name="planDuration"
+            required
+            placeholder="e.g., 1 hour"
+            style="
+              width: 100%;
+              padding: 8px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+              height: 60px;
+            "
+          />
+        </div>
+
+        <!-- Features -->
+        <div style="margin-bottom: 15px">
+          <label for="planFeatures">Features (comma separated)</label><br />
+          <input
+            type="text"
+            id="planFeatures"
+            name="planFeatures"
+            placeholder="e.g., High-speed connection, Unlimited bandwidth"
+            style="
+              width: 100%;
+              padding: 8px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+              height: 60px;
+            "
+          />
+        </div>
+
+        <!-- Popular Tag -->
+        <div style="margin-bottom: 15px">
+          <label>
+            <input type="checkbox" id="isPopular" name="isPopular" /> Mark as
+            Popular
+          </label>
+        </div>
+
+        <!-- Active Status -->
+        <div style="margin-bottom: 20px">
+          <label>
+            <input type="checkbox" id="isActive" name="isActive" checked /> Plan
+            is Active
+          </label>
+        </div>
+
+        <button style="height: 60px" type="submit" class="btn btn-primary">
+          Save Plan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!--Body-->
   <body>
     <section id="top-section">
       <!--Top Nav(Fixed)-->
@@ -345,7 +504,7 @@
 
             <!-- Add New Plan Card -->
             <div
-            id="plan-card"
+              id="plan-card"
               class="plan-card"
               style="
                 align-items: center;
@@ -366,6 +525,91 @@
 
     <!--Script-->
     <script>
+      const addNewPlanCard = document.getElementById("plan-card");
+      const modal = document.getElementById("newPlanModal");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+
+      addNewPlanCard.addEventListener("click", () => {
+        modal.style.display = "flex";
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+
+      window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+
+      document
+        .getElementById("newPlanForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          // Prepare data
+          const priceValue = parseFloat(
+            document.getElementById("planPrice").value
+          );
+          const featuresValue = document
+            .getElementById("planFeatures")
+            .value.split(",")
+            .map((f) => f.trim())
+            .filter((f) => f.length > 0);
+
+          // Frontend validation
+          if (!document.getElementById("planName").value.trim()) {
+            throw new Error("Plan name is required");
+          }
+          if (isNaN(priceValue) || priceValue <= 0) {
+            throw new Error("Price must be a positive number");
+          }
+          if (!document.getElementById("planDuration").value.trim()) {
+            throw new Error("Duration is required");
+          }
+          if (featuresValue.length === 0) {
+            throw new Error("At least one feature is required");
+          }
+
+          const planData = {
+            offer_name: document.getElementById("planName").value.trim(),
+            offer_description: document
+              .getElementById("planDescription")
+              .value.trim(),
+            cost: priceValue,
+            duration: document.getElementById("planDuration").value.trim(),
+            features: featuresValue,
+            is_popular: document.getElementById("isPopular").checked,
+            is_active: document.getElementById("isActive").checked,
+          };
+
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/v1/admin/create-plan",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(planData),
+              }
+            );
+
+            if (response.ok) {
+              alert("Plan saved successfully!");
+              // Optionally refresh list or close modal
+              document.getElementById("newPlanModal").style.display = "none";
+            } else {
+              const error = await response.json();
+              alert("Error saving plan: " + (error.message || "Unknown error"));
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Network error while saving the plan.");
+          }
+        });
+
       const fetchOffers = async () => {
         try {
           const response = await fetch(
@@ -378,44 +622,78 @@
             }
           );
 
-          const result = await response.json();
-
-          if(result.length === 0){
-            document.getElementById('plans-container').style="grid-template-columns: 300px;"
-            document.getElementById('plan-card').style="height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s ease;"
-            document.getElementById('plan-card').addEventListener('mouseenter', ()=>{
-              document.getElementById('plan-card').style.transform = 'translateY(-10px)';
-            })
-            document.getElementById('plan-card').addEventListener('mouseleave', ()=>{
-              document.getElementById('plan-card').style.transform = 'translateY(0)';
-            })
-          } else{
-            document.getElementById('plans-div').innerHTML = `
-              <!-- Plan 1 -->
-            <div class="plan-card">
-              <div class="plan-header">
-                <span class="plan-name"
-                  >Hourly Pass <span class="popular-tag">POPULAR</span></span
-                >
-                <span class="plan-price">KES 50</span>
-              </div>
-              <span class="plan-duration">1 hour access</span>
-              <ul class="plan-features">
-                <li><i class="fas fa-check"></i> High-speed connection</li>
-                <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-                <li><i class="fas fa-check"></i> One device only</li>
-              </ul>
-              <div class="plan-actions">
-                <button class="btn btn-primary">Edit Plan</button>
-                <button class="btn btn-secondary">Deactivate</button>
-              </div>
-            </div>
-            `
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
-          
 
+          const plans = await response.json();
+          console.log("API Response:", plans); // Debug output
+
+          const plansContainer = document.getElementById("plans-div");
+
+          if (!plans || plans.length === 0) {
+            // No plans found
+            document.getElementById(
+              "plans-container"
+            ).style.gridTemplateColumns = "300px";
+            document.getElementById("plan-card").style.display = "flex";
+            return;
+          }
+
+          // Clear existing content
+          plansContainer.innerHTML = "";
+
+          // Generate HTML for each plan
+          plans.forEach((plan) => {
+            if (!plan) return; // Skip if plan is null/undefined
+
+            const planCard = document.createElement("div");
+            planCard.className = "plan-card";
+
+            // Safe feature list generation
+            const featuresList = (plan.features || [])
+              .map(
+                (feature) => `<li><i class="fas fa-check"></i> ${feature}</li>`
+              )
+              .join("");
+
+            const popularTag = plan.is_popular
+              ? '<span class="popular-tag">POPULAR</span>'
+              : "";
+
+            planCard.innerHTML = `
+        <div class="plan-header">
+          <span class="plan-name">
+            ${plan.name || "Unnamed Plan"} ${popularTag}
+          </span>
+          <span class="plan-price">KES ${plan.cost || "0.00"}</span>
+        </div>
+        <span class="plan-duration">${
+          plan.duration || "No duration specified"
+        }</span>
+        <ul class="plan-features">
+          ${featuresList || "<li>No features specified</li>"}
+        </ul>
+        <div class="plan-actions">
+          <button class="btn btn-primary">Edit Plan</button>
+          <button class="btn btn-secondary">
+            ${plan.is_active ? "Deactivate" : "Activate"}
+          </button>
+        </div>
+      `;
+
+            plansContainer.appendChild(planCard);
+          });
+
+          // Keep the "Add New Plan" card
+          document.getElementById("plan-card").style.display = "flex";
         } catch (error) {
           console.error("Error fetching offers:", error);
+          document.getElementById("plans-div").innerHTML = `
+      <div class="error-message">
+        ${error.message || "Failed to load plans. Please try again later."}
+      </div>
+    `;
         }
       };
 

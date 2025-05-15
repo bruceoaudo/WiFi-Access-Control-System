@@ -119,6 +119,7 @@
       .offer-actions {
         display: flex;
         justify-content: center;
+        position: relative;
       }
 
       .btn {
@@ -151,7 +152,7 @@
         position: absolute;
         top: 10px;
         right: -30px;
-        background-color: #f59e0b;
+        background-color: #ffc107;
         color: white;
         padding: 3px 30px;
         transform: rotate(45deg);
@@ -180,6 +181,102 @@
         margin-bottom: 30px;
         font-size: 1rem;
       }
+
+      /* Message styles */
+      .message {
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        text-align: center;
+        display: none;
+      }
+
+      .error-message {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+      }
+
+      .success-message {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 32px;
+        }
+
+        .section-title {
+          font-size: 1.3rem;
+        }
+
+        .section-subtitle {
+          font-size: 0.9rem;
+        }
+
+        .offers-container {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .offer-card {
+          margin-bottom: 15px;
+        }
+
+        /* Position messages at bottom of form on mobile */
+        .offer-actions {
+          flex-direction: column;
+        }
+
+        .message {
+          order: 1;
+          margin-top: 15px;
+          display: block;
+        }
+
+        .btn {
+          order: 0;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 28px;
+        }
+
+        section {
+          height: 80px;
+          margin-bottom: 30px;
+        }
+
+        main {
+          padding: 15px;
+        }
+
+        .offer-header {
+          padding: 15px;
+        }
+
+        .offer-name {
+          font-size: 1.3rem;
+        }
+
+        .offer-price {
+          font-size: 1.8rem;
+        }
+
+        .offer-body {
+          padding: 15px;
+        }
+
+        .special-offer::before {
+          font-size: 0.7rem;
+          right: -35px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -195,135 +292,19 @@
         Select the perfect WiFi access plan for your needs
       </p>
 
-      <div class="offers-container">
-        <!-- Standard Time-Based Offers -->
-        <div class="offer-card">
-          <div class="offer-header">
-            <div class="offer-name">Hourly Pass</div>
-            <div class="offer-price">KES 50</div>
-            <div class="offer-duration">1 hour access</div>
-          </div>
-          <div class="offer-body">
-            <ul class="offer-features">
-              <li><i class="fas fa-check"></i> High-speed connection</li>
-              <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-              <li><i class="fas fa-check"></i> Single device</li>
-              <li><i class="fas fa-check"></i> Instant activation</li>
-            </ul>
-            <div class="offer-actions">
-              <button class="btn btn-primary">Get Started</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="offer-card">
-          <div class="offer-header">
-            <div class="offer-name">Daily Pass</div>
-            <div class="offer-price">KES 200</div>
-            <div class="offer-duration">24 hours access</div>
-          </div>
-          <div class="offer-body">
-            <ul class="offer-features">
-              <li><i class="fas fa-check"></i> High-speed connection</li>
-              <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-              <li><i class="fas fa-check"></i> Up to 2 devices</li>
-              <li><i class="fas fa-check"></i> 24/7 support</li>
-            </ul>
-            <div class="offer-actions">
-              <button class="btn btn-primary">Get Started</button>
-            </div>
-            <div class="offer-savings">Save 17% vs hourly</div>
-          </div>
-        </div>
-
-        <div class="offer-card">
-          <div class="offer-header">
-            <div class="offer-name">Weekly Pass</div>
-            <div class="offer-price">KES 1,000</div>
-            <div class="offer-duration">7 days access</div>
-          </div>
-          <div class="offer-body">
-            <ul class="offer-features">
-              <li><i class="fas fa-check"></i> High-speed connection</li>
-              <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-              <li><i class="fas fa-check"></i> Up to 3 devices</li>
-              <li><i class="fas fa-check"></i> Priority support</li>
-            </ul>
-            <div class="offer-actions">
-              <button class="btn btn-primary">Get Started</button>
-            </div>
-            <div class="offer-savings">Save 29% vs daily</div>
-          </div>
-        </div>
-
-        <!-- Special Offers -->
-        <div class="offer-card special-offer">
-          <div class="offer-header">
-            <div class="offer-name">First-Time Offer</div>
-            <div class="offer-price">KES 0</div>
-            <div class="offer-duration">30 minutes free</div>
-          </div>
-          <div class="offer-body">
-            <ul class="offer-features">
-              <li><i class="fas fa-check"></i> High-speed connection</li>
-              <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-              <li><i class="fas fa-check"></i> Single device</li>
-              <li><i class="fas fa-check"></i> No payment required</li>
-            </ul>
-            <div class="offer-actions">
-              <button class="btn btn-primary">Claim Offer</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="offer-card special-offer">
-          <div class="offer-header">
-            <div class="offer-name">Night Bundle</div>
-            <div class="offer-price">KES 150</div>
-            <div class="offer-duration">6pm - 6am</div>
-          </div>
-          <div class="offer-body">
-            <ul class="offer-features">
-              <li><i class="fas fa-check"></i> High-speed connection</li>
-              <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-              <li><i class="fas fa-check"></i> Up to 2 devices</li>
-              <li><i class="fas fa-check"></i> Perfect for overnight</li>
-            </ul>
-            <div class="offer-actions">
-              <button class="btn btn-primary">Get Started</button>
-            </div>
-            <div class="offer-savings">Save 25% vs daily</div>
-          </div>
-        </div>
-
-        <div class="offer-card special-offer">
-          <div class="offer-header">
-            <div class="offer-name">Weekend Special</div>
-            <div class="offer-price">KES 300</div>
-            <div class="offer-duration">Fri 6pm - Mon 6am</div>
-          </div>
-          <div class="offer-body">
-            <ul class="offer-features">
-              <li><i class="fas fa-check"></i> High-speed connection</li>
-              <li><i class="fas fa-check"></i> Unlimited bandwidth</li>
-              <li><i class="fas fa-check"></i> Up to 3 devices</li>
-              <li><i class="fas fa-check"></i> 60-hour access</li>
-            </ul>
-            <div class="offer-actions">
-              <button class="btn btn-primary">Get Started</button>
-            </div>
-            <div class="offer-savings">Save 50% vs daily</div>
-          </div>
-        </div>
+      <div class="offers-container" id="offers-container">
+        <!-- Offers will be dynamically inserted here -->
       </div>
     </main>
 
     <!--Script-->
     <script>
+      let allPlans = [];
+
       const fetchOffers = async () => {
         try {
           const response = await fetch(
-            "http://localhost:3000/api/v1/offers/get-plans",
+            "http://localhost:3000/api/v1/plans/get-plans",
             {
               method: "GET",
               headers: {
@@ -332,12 +313,115 @@
             }
           );
 
-          const result = await response.json();
-          console.log(result);
-          // Here you would process the result and update the DOM
-          // For example: render offers dynamically instead of hardcoded
+          if (!response.ok) {
+            throw new Error('Failed to fetch offers');
+          }
+
+          const plans = await response.json();
+          allPlans = plans; // Store plans globally
+          renderOffers(plans);
         } catch (error) {
           console.error("Error fetching offers:", error);
+          showError('Failed to load offers. Please try again later.');
+        }
+      };
+
+      const renderOffers = (plans) => {
+        const container = document.getElementById('offers-container');
+        
+        if (!plans || plans.length === 0) {
+          showError('No offers available at the moment.');
+          return;
+        }
+
+        container.innerHTML = plans.map((plan, index) => `
+          <div class="offer-card ${plan.is_popular ? 'special-offer' : ''}">
+            <div class="offer-header">
+              <div class="offer-name">${plan.name}</div>
+              <div class="offer-price">KES ${parseFloat(plan.cost).toFixed(2)}</div>
+              <div class="offer-duration">${plan.duration}</div>
+            </div>
+            <div class="offer-body">
+              <ul class="offer-features">
+                ${(plan.features || []).map(feature => `
+                  <li><i class="fas fa-check"></i> ${feature}</li>
+                `).join('')}
+              </ul>
+              <div class="offer-actions">
+                <button class="btn btn-primary" data-plan-id="${plan.plan_id}">Get Started</button>
+                <div class="message error-message" id="error-${plan.plan_id}" style="display: none;"></div>
+                <div class="message success-message" id="success-${plan.plan_id}" style="display: none;"></div>
+              </div>
+              ${plan.is_popular ? '<div class="offer-savings">Popular Choice</div>' : ''}
+            </div>
+          </div>
+        `).join('');
+
+        // Add event listeners to all buttons
+        document.querySelectorAll('.btn-primary').forEach(button => {
+          button.addEventListener('click', handlePurchase);
+        });
+      };
+
+      const showError = (message, planId = null) => {
+        if (planId) {
+          // Show error for specific plan
+          const errorElement = document.getElementById(`error-${planId}`);
+          errorElement.textContent = message;
+          errorElement.style.display = 'block';
+          document.getElementById(`success-${planId}`).style.display = 'none';
+        } else {
+          // Global error
+          const container = document.getElementById('offers-container');
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 20px;">
+              <p class="error-message" style="display: block;">${message}</p>
+            </div>
+          `;
+        }
+      };
+
+      const showSuccess = (message, planId) => {
+        const successElement = document.getElementById(`success-${planId}`);
+        successElement.textContent = message;
+        successElement.style.display = 'block';
+        document.getElementById(`error-${planId}`).style.display = 'none';
+      };
+
+      const handlePurchase = async (event) => {
+        const planId = event.target.getAttribute('data-plan-id');
+        const plan = allPlans.find(p => p.plan_id == planId);
+        
+        if (!plan) {
+          showError('Plan not found', planId);
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/api/v1/plans/purchase-plan",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                plan_id: planId
+              })
+            }
+          );
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Purchase failed');
+          }
+
+          const result = await response.json();
+          showSuccess(`Successfully purchased: ${plan.name}`, planId);
+          
+        } catch (error) {
+          console.error("Purchase error:", error);
+          showError(`Error: ${error.message}`, planId);
         }
       };
 

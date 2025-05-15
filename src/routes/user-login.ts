@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { validateLoginDetails } from "../utils/validate";
 import jwt from "jsonwebtoken";
+import { validateUserLoginDetails } from "../utils";
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.post("/login", (req: Request, res: Response) => {
       const { phone, password } = req.body;
 
       // Step 1–3: Validate inputs, user existence, and password
-      const { phoneNumber } = await validateLoginDetails(phone, password);
+      const { phoneNumber } = await validateUserLoginDetails(phone, password);
 
       // Step 4: Sign JWT token
       const token = jwt.sign({ phone: phoneNumber }, JWT_SECRET, {
@@ -20,7 +20,7 @@ router.post("/login", (req: Request, res: Response) => {
       });
 
       // Step 5: Set token as HTTP-only cookie
-      res.cookie("token", token, {
+      res.cookie("user-token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
