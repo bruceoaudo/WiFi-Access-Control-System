@@ -24,7 +24,7 @@ export const authenticateUser = (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies?.token;
+    const token = req.cookies?.user_token;
 
     if (!token) {
       res.status(401).json({ error: "Authentication token missing" });

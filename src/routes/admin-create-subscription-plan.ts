@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { authenticateAdmin } from "../middlewares/authenticateAdmin";
-import { validateSubscriptionPlanDetails } from "../utils/validateSubscriptionPlanDetails";
-import { createSubscriptionPlan } from "../utils/createSubscriptionPlan";
+import { validateSubscriptionPlanDetails } from "../utils";
+import { createSubscriptionPlan } from "../utils";
 
 const router = Router();
 

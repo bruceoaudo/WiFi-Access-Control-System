@@ -1,9 +1,9 @@
-import { Request, Response, Router } from "express";
-import { accessToken } from "../utils/safaricom";
-import { db } from "../db";
+import { Router, Request, Response } from "express";
 import { authenticateUser } from "../middlewares/authenticateUser";
-import { generateTimestamp } from "../utils/generateTimestamp";
-import { generatePassword } from "../utils/generatePassword";
+import { db } from "../db";
+import { accessToken } from "../utils";
+import { generateTimestamp } from "../utils";
+import { generatePassword } from "../utils";
 import axios from "axios";
 
 const router = Router();
@@ -16,9 +16,7 @@ router.post(
       try {
         const { plan_id } = req.body;
 
-        // Confirm if user exists first
         const userPhone = req.user?.phone;
-
         const result = await db.query(
           `SELECT phonenumber FROM users WHERE phonenumber = $1`,
           [userPhone]
@@ -28,7 +26,6 @@ router.post(
           return res.status(401).json({ error: "User does not exist" });
         }
 
-        // Validate plan exists
         const plan = await db.query(
           "SELECT * FROM subscription_plan WHERE plan_id = $1",
           [plan_id]
@@ -38,19 +35,15 @@ router.post(
         }
 
         const token = await accessToken();
-
         const url =
           "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
-
         const headers = {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         };
 
         const timeStamp = generateTimestamp();
-
         const customerPhone = "254" + userPhone?.substring(1);
-
         const password = generatePassword(
           process.env.MPESA_BUSINESS_SHORTCODE!,
           process.env.MPESA_PASSKEY!,
@@ -58,24 +51,34 @@ router.post(
         );
 
         const body = {
-          BusinessShortCode: process.env.MPESA_BUSINESS_SHORTCODE, // Till number
+          BusinessShortCode: Number(process.env.MPESA_BUSINESS_SHORTCODE),
           Password: password,
           Timestamp: timeStamp,
           TransactionType: "CustomerPayBillOnline",
-          Amount: "10",
-          PartyA: customerPhone,
-          PartyB: process.env.MPESA_BUSINESS_SHORTCODE, // Till number
-          PhoneNumber: customerPhone,
-          CallBackURL: process.env.MPESA_CALLBACK_URL,
-          AccountReference: "123456",
-          TransactionDesc: "Testing",
+          Amount: Number(plan.rows[0].cost),
+          PartyA: Number(customerPhone),
+          PartyB: Number(process.env.MPESA_BUSINESS_SHORTCODE),
+          PhoneNumber: Number(customerPhone),
+          CallBackURL: process.env.MPESA_CALLBACK_URL!,
+          AccountReference: "WiFi Access Control System",
+          TransactionDesc: "Subscription payment",
         };
 
         const response = await axios.post(url, body, { headers });
 
-        console.log("STK Push Response:", response.data);
+        const checkoutRequestID = response.data.CheckoutRequestID;
+
+        await db.query(
+          `INSERT INTO mpesa_payments (user_phone, plan_id, checkout_request_id, status) VALUES ($1, $2, $3, $4)`,
+          [userPhone, plan_id, checkoutRequestID, "pending"]
+        );
+
+        res.status(200).json({
+          message: "STK push sent",
+          request_id: checkoutRequestID,
+        });
       } catch (error: any) {
-        console.log({ error });
+        console.error({ error });
         res.status(500).json({
           error: error.message || "Purchase failed",
         });

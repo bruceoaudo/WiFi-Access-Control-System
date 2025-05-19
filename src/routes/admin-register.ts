@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { registerAdmin } from "../utils/registerAdmin";
-import { validateAdminRegisterDetails } from "../utils/validateAdminRegisterDetails";
+import { registerAdmin } from "../utils";
+import { validateAdminRegisterDetails } from "../utils";
 
 const router = Router();
 

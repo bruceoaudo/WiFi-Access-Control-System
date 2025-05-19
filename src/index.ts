@@ -3,16 +3,18 @@ import path from "path";
 import http from "http";
 import cors from "cors";
 import LoginRoute from "./routes/user-login";
-import RegisterRoute from "./routes/register";
-import AdminLoginRoute from "./routes/adminLogin";
-import AdminRegisterRoute from "./routes/adminRegister";
-import GetAdminPlansRoute from "./routes/getSubscriptionPlansAdmin";
-import GetPlansRoute from "./routes/getSubscriptionPlans";
-import CreatePlansRoute from "./routes/createSubscriptionPlan";
-import PurchasePlanRoute from "./routes/purchasePlan";
+import RegisterRoute from "./routes/user-register";
+import AdminLoginRoute from "./routes/admin-login";
+import AdminRegisterRoute from "./routes/admin-register";
+import GetAdminPlansRoute from "./routes/admin-get-subscription-plans";
+import GetPlansRoute from "./routes/user-get-subscription-plans";
+import CreatePlansRoute from "./routes/admin-create-subscription-plan";
+import PurchasePlanRoute from "./routes/user-purchase-plan";
+import PaymentStatusRoute from "./routes/user-payment-status";
+import MpesaCallBackRoute from "./routes/mpesa-callback";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { createTables } from "./db";
+import { createTables, db } from "./db";
 
 dotenv.config();
 const app: Application = express();
@@ -31,6 +33,12 @@ app.use(
       process.env.NODE_ENV === "development" ? "*" : "production-domain.com",
   })
 );
+
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.url}`);
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -46,18 +54,13 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "healthy" });
 });
 
-app.post("/mpesa/callback", (req, res) => {
-  console.log("Callback received:", req.body);
-
-  // Safaricom will send transaction status here
-  res.status(200).json({ message: "Callback received successfully" });
-});
-
 // Routes
+app.use("/api/v1/mpesa", MpesaCallBackRoute);
 app.use("/api/v1/auth", LoginRoute);
 app.use("/api/v1/auth", RegisterRoute);
 app.use("/api/v1/plans", GetPlansRoute);
 app.use("/api/v1/plans", PurchasePlanRoute);
+app.use("/api/v1/plans", PaymentStatusRoute);
 app.use("/api/v1/admin", GetAdminPlansRoute);
 app.use("/api/v1/admin", AdminLoginRoute);
 app.use("/api/v1/admin", AdminRegisterRoute);

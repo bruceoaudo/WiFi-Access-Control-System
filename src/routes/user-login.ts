@@ -20,7 +20,7 @@ router.post("/login", (req: Request, res: Response) => {
       });
 
       // Step 5: Set token as HTTP-only cookie
-      res.cookie("user-token", token, {
+      res.cookie("user_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",

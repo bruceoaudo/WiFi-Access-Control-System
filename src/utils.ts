@@ -1,6 +1,7 @@
 import axios from "axios";
 import { db } from "./db";
 import argon2 from "argon2";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "./erros";
 
 const verifyPassword = async (
   password: string,
@@ -28,14 +29,14 @@ export const validateUserLoginDetails = async (
 ) => {
   // Check for empty inputs
   if (!phone || !password) {
-    throw new Error("All fields must be filled");
+    throw new BadRequestError("Please provide phone and password");
   }
 
   try {
     // Basic phone validation
     const phoneRegex = /^\d{10,}$/;
     if (!phoneRegex.test(phone)) {
-      throw new Error("Invalid phone number format");
+      throw new BadRequestError("Please provide a valid phone number");
     }
 
     // Retrieve user from database (use parameterized query)
@@ -45,7 +46,7 @@ export const validateUserLoginDetails = async (
     );
 
     if (result.rows.length === 0) {
-      throw new Error("Invalid credentials");
+      throw new UnauthorizedError("Incorrect phone number or password");
     }
 
     const user = result.rows[0];
@@ -54,7 +55,7 @@ export const validateUserLoginDetails = async (
     const isVerified = await verifyPassword(password, user.password);
 
     if (!isVerified) {
-      throw new Error("Invalid credentials");
+      throw new UnauthorizedError("Incorrect phone number or password");
     }
 
     // Return phone

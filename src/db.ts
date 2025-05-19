@@ -71,11 +71,16 @@ export async function createTables() {
       `);
 
     await db.query(`
-      CREATE TABLE IF NOT EXISTS payment (
-        payment_id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(user_id),
-        plan_id INTEGER REFERENCES subscription_plan(plan_id)
-      );
+      CREATE TABLE IF NOT EXISTS mpesa_payments (
+      id SERIAL PRIMARY KEY,
+      user_phone VARCHAR(20) NOT NULL,
+      plan_id INTEGER NOT NULL REFERENCES subscription_plan(plan_id),
+      checkout_request_id VARCHAR(100) NOT NULL,
+      status VARCHAR(20) NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (plan_id) REFERENCES subscription_plan(plan_id)
+);
+
     `);
 
     console.log("All tables checked/created successfully.");

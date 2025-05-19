@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { validateAdminLoginDetails } from "../utils/validateAdminLoginDetails";
+import { validateAdminLoginDetails } from "../utils";
 import jwt from "jsonwebtoken";
 
 const router = Router();
