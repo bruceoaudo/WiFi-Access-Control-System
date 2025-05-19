@@ -11,9 +11,11 @@ import GetPlansRoute from "./routes/user-get-subscription-plans";
 import CreatePlansRoute from "./routes/admin-create-subscription-plan";
 import PurchasePlanRoute from "./routes/user-purchase-plan";
 import PaymentStatusRoute from "./routes/user-payment-status";
-import MpesaCallBackRoute from "./routes/mpesa-callback";
+//import MpesaCallBackRoute from "./routes/mpesa-callback";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { createTables, db } from "./db";
 
 dotenv.config();
@@ -21,6 +23,54 @@ const app: Application = express();
 app.use(cookieParser());
 const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
+
+app.set("trust proxy", 1);
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+
+      styleSrc: [
+        "'self'",
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com",
+        //"'unsafe-inline'", // Allow inline styles
+      ],
+
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com",
+        "https://cdnjs.cloudflare.com",
+      ],
+
+      connectSrc: [
+        "'self'",
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+      ],
+
+      scriptSrc: [
+        "'self'",
+        "https://cdnjs.cloudflare.com",
+        //"'unsafe-inline'", // Allow inline scripts
+      ],
+
+      // Allow images or other assets
+      imgSrc: ["'self'", "data:"],
+
+      // Allow preconnect/prefetch
+      preconnectSrc: [
+        "'self'",
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+      ],
+
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
 
 (async () => {
   await createTables();
@@ -49,21 +99,70 @@ app.use(
   })
 );
 
+// MPESA Callback
+app.post("/mpesa/callback", (req: Request, res: Response) => {
+  (async () => {
+    try {
+      console.log(
+        "M-Pesa Callback Request Body:",
+        JSON.stringify(req.body, null, 2)
+      );
+
+      const body = req.body;
+      const callback = body.Body?.stkCallback;
+
+      const checkoutRequestID = callback?.CheckoutRequestID;
+      const resultCode = callback?.ResultCode;
+
+      let status = "failed";
+      if (resultCode === 0) {
+        status = "success";
+      } else if (resultCode === 1032) {
+        status = "cancelled";
+      }
+
+      await db.query(
+        `UPDATE mpesa_payments SET status = $1 WHERE checkout_request_id = $2`,
+        [status, checkoutRequestID]
+      );
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Callback error:", error);
+      res.sendStatus(500);
+    }
+  })();
+});
+
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "healthy" });
 });
 
+// --- Rate Limiter ---
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: "Too many attempts. Please try again later.",
+  },
+});
+
 // Routes
-app.use("/api/v1/mpesa", MpesaCallBackRoute);
+//app.use("/api/v1/mpesa", MpesaCallBackRoute);
+app.use("/api/v1/auth", authLimiter);
 app.use("/api/v1/auth", LoginRoute);
 app.use("/api/v1/auth", RegisterRoute);
 app.use("/api/v1/plans", GetPlansRoute);
 app.use("/api/v1/plans", PurchasePlanRoute);
 app.use("/api/v1/plans", PaymentStatusRoute);
+
+app.use("/api/v1/admin/auth", authLimiter);
+app.use("/api/v1/admin/auth", AdminLoginRoute);
+app.use("/api/v1/admin/auth", AdminRegisterRoute);
 app.use("/api/v1/admin", GetAdminPlansRoute);
-app.use("/api/v1/admin", AdminLoginRoute);
-app.use("/api/v1/admin", AdminRegisterRoute);
 app.use("/api/v1/admin", CreatePlansRoute);
 
 // Error handling middleware

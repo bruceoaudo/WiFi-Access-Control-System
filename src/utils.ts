@@ -27,44 +27,48 @@ export const validateUserLoginDetails = async (
   phone: string,
   password: string
 ) => {
+  // Make sure they are strings
+  if (typeof phone !== "string" || typeof password !== "string") {
+    throw new BadRequestError("Invalid input type");
+  }
+
+  const sanitizedPhone = phone.trim();
+  const sanitizedPassword = password.trim();
+
   // Check for empty inputs
-  if (!phone || !password) {
+  if (!sanitizedPhone || !sanitizedPassword) {
     throw new BadRequestError("Please provide phone and password");
   }
 
-  try {
-    // Basic phone validation
-    const phoneRegex = /^\d{10,}$/;
-    if (!phoneRegex.test(phone)) {
-      throw new BadRequestError("Please provide a valid phone number");
-    }
-
-    // Retrieve user from database (use parameterized query)
-    const result = await db.query(
-      `SELECT phonenumber, password FROM users WHERE phonenumber = $1`,
-      [phone]
-    );
-
-    if (result.rows.length === 0) {
-      throw new UnauthorizedError("Incorrect phone number or password");
-    }
-
-    const user = result.rows[0];
-
-    // Compare password to see if they match
-    const isVerified = await verifyPassword(password, user.password);
-
-    if (!isVerified) {
-      throw new UnauthorizedError("Incorrect phone number or password");
-    }
-
-    // Return phone
-    return {
-      phoneNumber: user.phonenumber,
-    };
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Basic phone validation
+  const phoneRegex = /^\d{10,15}$/;
+  if (!phoneRegex.test(sanitizedPhone)) {
+    throw new BadRequestError("Please provide a valid phone number");
   }
+
+  // Retrieve user from database (use parameterized query)
+  const result = await db.query(
+    `SELECT user_id, password FROM users WHERE phonenumber = $1`,
+    [sanitizedPhone]
+  );
+
+  if (result.rows.length === 0) {
+    throw new UnauthorizedError("Incorrect phone number or password");
+  }
+
+  const user = result.rows[0];
+
+  // Compare password to see if they match
+  const isVerified = await verifyPassword(sanitizedPassword, user.password);
+
+  if (!isVerified) {
+    throw new UnauthorizedError("Incorrect phone number or password");
+  }
+
+  // Return phone
+  return {
+    userId: user.user_id,
+  };
 };
 
 export const validateRegisterDetails = async (
@@ -77,40 +81,68 @@ export const validateRegisterDetails = async (
   phoneNumber: string;
   hashedPassword: string;
 }> => {
-  if (!name || !phone || !password || !confirmPassword) {
+  // Sanitize and validate types
+  if (
+    typeof name !== "string" ||
+    typeof phone !== "string" ||
+    typeof password !== "string" ||
+    typeof confirmPassword !== "string"
+  ) {
+    throw new Error("Invalid input type");
+  }
+
+  const sanitizedName = name.trim();
+  const sanitizedPhone = phone.trim();
+  const sanitizedPassword = password.trim();
+  const sanitizedConfirmPassword = confirmPassword.trim();
+
+  if (
+    !sanitizedName ||
+    !sanitizedPhone ||
+    !sanitizedPassword ||
+    !sanitizedConfirmPassword
+  ) {
     throw new Error("All fields must be filled");
   }
 
-  if (password !== confirmPassword) {
+  if (sanitizedPassword !== sanitizedConfirmPassword) {
     throw new Error("Passwords do not match");
   }
 
-  try {
-    // Basic phone validation
-    const phoneRegex = /^\d{10,}$/;
-    if (!phoneRegex.test(phone)) {
-      throw new Error("Invalid phone number format");
-    }
-
-    const result = await db.query(
-      `SELECT phonenumber FROM users WHERE phonenumber = $1`,
-      [phone]
-    );
-
-    if (result.rows.length > 0) {
-      throw new Error("User already registered.");
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    return {
-      userName: name,
-      phoneNumber: phone,
-      hashedPassword: hashedPassword,
-    };
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Validate name length
+  if (sanitizedName.length < 2 || sanitizedName.length > 50) {
+    throw new Error("Name must be between 2 and 50 characters");
   }
+
+  // Basic phone validation (10–15 digits)
+  const phoneRegex = /^\d{10,15}$/;
+  if (!phoneRegex.test(sanitizedPhone)) {
+    throw new Error("Invalid phone number format");
+  }
+
+  const result = await db.query(
+    `SELECT phonenumber FROM users WHERE phonenumber = $1`,
+    [sanitizedPhone]
+  );
+
+  if (result.rows.length > 0) {
+    throw new Error("User already registered.");
+  }
+
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  if (!strongPasswordRegex.test(sanitizedPassword)) {
+    throw new Error(
+      "Password must be at least 8 characters and include uppercase, lowercase, and number"
+    );
+  }
+
+  const hashedPassword = await hashPassword(sanitizedPassword);
+
+  return {
+    userName: sanitizedName,
+    phoneNumber: sanitizedPhone,
+    hashedPassword: hashedPassword,
+  };
 };
 
 export const validateAdminLoginDetails = async (
@@ -265,15 +297,15 @@ export const registerUser = async (
   name: string,
   phone: string,
   password: string
-) => {
+): Promise<void> => {
   try {
-    // Insert the new user
     await db.query(
-      `INSERT INTO users (NAME, PHONENUMBER, PASSWORD) VALUES ($1, $2, $3)`,
-      [name, phone, password]
+      `INSERT INTO users (name, phonenumber, password) VALUES ($1, $2, $3)`,
+      [name.trim(), phone.trim(), password]
     );
   } catch (error: any) {
-    throw new Error(error.message);
+    console.error("DB Insert Error:", error);
+    throw new Error("Unable to register user at this time");
   }
 };
 

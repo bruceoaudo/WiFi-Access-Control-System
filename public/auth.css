@@ -3,7 +3,7 @@
   --color-bg: #ffffff;
   --color-text: #000000;
   --color-heading: #111827;
-  --color-section-bg: #f3f4f6;
+  --color-section-bg: #3b82f6;
   --color-input-bg: #fff;
   --color-input-border: #ccc;
   --color-input-text: #000;
@@ -149,7 +149,7 @@ p {
   :root {
     --color-bg: #121212;
     --color-text: #e0e0e0;
-    --color-section-bg: #1f2937;
+    --color-section-bg: #1e3a8a;
     --color-heading: #ffffff;
     --color-input-bg: #1e1e1e;
     --color-input-border: #555;

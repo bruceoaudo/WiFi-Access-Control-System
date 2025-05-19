@@ -8,25 +8,28 @@ const form = document.getElementById("formEl");
 document.getElementById("formEl").addEventListener("submit", async (event) => {
   event.preventDefault();
 
+  const phoneValue = phone.value.trim();
+  const passwordValue = password.value.trim();
+
+  if (!phoneValue || !passwordValue) {
+    showError("All fields are required");
+    return;
+  }
+
+  const phoneRegex = /^\d{10,15}$/;
+  if (!phoneRegex.test(phoneValue)) {
+    showError("Invalid phone number format");
+    return;
+  }
+
   // Start loading state
   setLoading(true);
 
   try {
-    if (!phone.value || !password.value) {
-      showError("All fields are required");
-      return;
-    }
-
-    // Basic phone validation
-    const phoneRegex = /^\d{10,}$/;
-    if (!phoneRegex.test(phone.value)) {
-      showError("Invalid phone number format");
-      return;
-    }
 
     const data = {
-      phone: phone.value,
-      password: password.value,
+      phone: phoneValue,
+      password: passwordValue,
     };
 
     const apiUrl =
@@ -36,6 +39,7 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
 
     const response = await fetch(apiUrl, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -66,49 +70,41 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
 const setLoading = (isLoading) => {
   const overlay = document.getElementById("loadingOverlay");
   const spinner = document.getElementById("loadingSpinner");
-  const form = document.getElementById("formEl");
 
-  if (isLoading) {
-    overlay.style.display = "block";
-    spinner.style.display = "block";
-    form.classList.add("loading-form");
-  } else {
-    overlay.style.display = "none";
-    spinner.style.display = "none";
-    form.classList.remove("loading-form");
-  }
+  overlay.style.display = isLoading ? "block" : "none";
+  spinner.style.display = isLoading ? "block" : "none";
+  form.classList.toggle("loading-form", isLoading);
 };
 
 const showError = (message) => {
-  error.innerHTML = `<p>${message}</p>`;
+  error.innerHTML = `<p>${sanitize(message)}</p>`;
   error.style.opacity = "1";
-
-  setTimeout(() => {
-    error.style.opacity = "0";
-  }, 3000);
+  setTimeout(() => (error.style.opacity = "0"), 3000);
 };
 
 const showSuccess = (message) => {
-  success.innerHTML = `<p>${message}</p>`;
+  success.innerHTML = `<p>${sanitize(message)}</p>`;
   success.style.opacity = "1";
-
-  setTimeout(() => {
-    success.style.opacity = "0";
-  }, 3000);
+  setTimeout(() => (success.style.opacity = "0"), 3000);
 };
 
-// Functionality for password eye icon
-document.addEventListener('DOMContentLoaded', function() {
-  const passwordToggle = document.querySelector('.password-toggle');
-  const passwordInput = document.getElementById('passwordEl');
+// Simple sanitizer to prevent injection
+function sanitize(str) {
+  const div = document.createElement("div");
+  div.innerText = str;
+  return div.innerHTML;
+}
 
-  passwordToggle.addEventListener('click', function() {
-    // Toggle the eye icon
-    this.classList.toggle('fa-eye');
-    this.classList.toggle('fa-eye-slash');
-    
-    // Toggle the password input type
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
+// Password eye toggle
+document.addEventListener("DOMContentLoaded", () => {
+  const passwordToggle = document.querySelector(".password-toggle");
+  if (!passwordToggle) return;
+
+  passwordToggle.addEventListener("click", () => {
+    const type =
+      password.getAttribute("type") === "password" ? "text" : "password";
+    password.setAttribute("type", type);
+    passwordToggle.classList.toggle("fa-eye");
+    passwordToggle.classList.toggle("fa-eye-slash");
   });
 });

@@ -5,41 +5,48 @@ const confirmPassword = document.getElementById("confirmPasswordEl");
 const error = document.getElementById("error");
 const success = document.getElementById("success");
 const loadingSpinner = document.getElementById("loading");
+const form = document.getElementById("formEl");
 
 document.getElementById("formEl").addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const userNameValue = userName.value.trim();
+  const phoneValue = phone.value.trim();
+  const passwordValue = password.value.trim();
+  const confirmPasswordValue = confirmPassword.value.trim();
+
+  if (
+    !userNameValue ||
+    !phoneValue ||
+    !passwordValue ||
+    !confirmPasswordValue
+  ) {
+    showError("All fields are required");
+    return;
+  }
+
+  if (password.value !== confirmPassword.value) {
+    showError("Passwords do not match");
+    return;
+  }
+
+  // Basic phone validation
+  const phoneRegex = /^\d{10,15}$/;
+  if (!phoneRegex.test(phone.value)) {
+    showError("Invalid phone number format");
+    return;
+  }
 
   // Start loading state
   setLoading(true);
 
   try {
-    if (
-      !userName.value ||
-      !phone.value ||
-      !password.value ||
-      !confirmPassword.value
-    ) {
-      showError("All fields are required");
-      return;
-    }
-
-    if (password.value !== confirmPassword.value) {
-      showError("Passwords do not match");
-      return;
-    }
-
-    // Basic phone validation
-    const phoneRegex = /^\d{10,}$/;
-    if (!phoneRegex.test(phone.value)) {
-      showError("Invalid phone number format");
-      return;
-    }
 
     const data = {
-      name: userName.value,
-      phone: phone.value,
-      password: password.value,
-      confirmPassword: confirmPassword.value,
+      name: userNameValue,
+      phone: phoneValue,
+      password: passwordValue,
+      confirmPassword: confirmPasswordValue,
     };
 
     const apiUrl =
@@ -68,7 +75,7 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
       window.location.href = "index.html";
     }, 3000);
   } catch (error) {
-    console.error("Login error:", err);
+    console.error("Login error:", error);
     showError("An error occurred registration. Please try again.");
   } finally {
     // End loading state
@@ -79,36 +86,30 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
 const setLoading = (isLoading) => {
   const overlay = document.getElementById("loadingOverlay");
   const spinner = document.getElementById("loadingSpinner");
-  const form = document.getElementById("formEl");
 
-  if (isLoading) {
-    overlay.style.display = "block";
-    spinner.style.display = "block";
-    form.classList.add("loading-form");
-  } else {
-    overlay.style.display = "none";
-    spinner.style.display = "none";
-    form.classList.remove("loading-form");
-  }
+  overlay.style.display = isLoading ? "block" : "none";
+  spinner.style.display = isLoading ? "block" : "none";
+  form.classList.toggle("loading-form", isLoading);
 };
 
 const showError = (message) => {
-  error.innerHTML = `<p>${message}</p>`;
+  error.innerHTML = `<p>${sanitize(message)}</p>`;
   error.style.opacity = "1";
-
-  setTimeout(() => {
-    error.style.opacity = "0";
-  }, 3000);
+  setTimeout(() => (error.style.opacity = "0"), 3000);
 };
 
 const showSuccess = (message) => {
-  success.innerHTML = `<p>${message}</p>`;
+  success.innerHTML = `<p>${sanitize(message)}</p>`;
   success.style.opacity = "1";
-
-  setTimeout(() => {
-    success.style.opacity = "0";
-  }, 3000);
+  setTimeout(() => (success.style.opacity = "0"), 3000);
 };
+
+// Simple sanitizer to prevent injection
+function sanitize(str) {
+  const div = document.createElement("div");
+  div.innerText = str;
+  return div.innerHTML;
+}
 
 // Functionality for password eye icon
 document.addEventListener("DOMContentLoaded", function () {

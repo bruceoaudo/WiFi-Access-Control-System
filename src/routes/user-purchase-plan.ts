@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { authenticateUser } from "../middlewares/authenticateUser";
+import { authenticateUser } from "../middlewares/authenticate-user";
 import { db } from "../db";
 import { accessToken } from "../utils";
 import { generateTimestamp } from "../utils";
@@ -16,10 +16,10 @@ router.post(
       try {
         const { plan_id } = req.body;
 
-        const userPhone = req.user?.phone;
+        const userId = req.user?.userId;
         const result = await db.query(
-          `SELECT phonenumber FROM users WHERE phonenumber = $1`,
-          [userPhone]
+          `SELECT phonenumber FROM users WHERE user_id = $1`,
+          [userId]
         );
 
         if (result.rows.length === 0) {
@@ -43,7 +43,7 @@ router.post(
         };
 
         const timeStamp = generateTimestamp();
-        const customerPhone = "254" + userPhone?.substring(1);
+        const customerPhone = "254" + result.rows[0].phonenumber?.substring(1);
         const password = generatePassword(
           process.env.MPESA_BUSINESS_SHORTCODE!,
           process.env.MPESA_PASSKEY!,
@@ -69,8 +69,8 @@ router.post(
         const checkoutRequestID = response.data.CheckoutRequestID;
 
         await db.query(
-          `INSERT INTO mpesa_payments (user_phone, plan_id, checkout_request_id, status) VALUES ($1, $2, $3, $4)`,
-          [userPhone, plan_id, checkoutRequestID, "pending"]
+          `INSERT INTO mpesa_payments (user_id, plan_id, checkout_request_id, status) VALUES ($1, $2, $3, $4)`,
+          [userId, plan_id, checkoutRequestID, "pending"]
         );
 
         res.status(200).json({

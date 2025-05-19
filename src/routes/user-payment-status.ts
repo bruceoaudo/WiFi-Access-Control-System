@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { db } from "../db";
-import { authenticateUser } from "../middlewares/authenticateUser";
+import { authenticateUser } from "../middlewares/authenticate-user";
 
 const router = Router();
 
@@ -10,11 +10,11 @@ router.get(
   (req: Request, res: Response) => {
     (async () => {
       try {
-        const userPhone = req.user?.phone;
+        const userId = req.user?.userId;
 
         const result = await db.query(
-          `SELECT status FROM mpesa_payments WHERE user_phone = $1 ORDER BY created_at DESC LIMIT 1`,
-          [userPhone]
+          `SELECT status FROM mpesa_payments WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`,
+          [userId]
         );
 
         if (result.rows.length === 0) {

@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { authenticateUser } from "../middlewares/authenticateUser";
+import { authenticateUser } from "../middlewares/authenticate-user";
 import { db } from "../db";
 
 const router = Router();
@@ -8,11 +8,11 @@ router.get("/get-plans", authenticateUser, (req: Request, res: Response) => {
   (async () => {
     try {
       // Confirm if user exists first
-      const userPhone = req.user?.phone;
+      const userId = req.user?.userId;
 
       const result = await db.query(
-        `SELECT phonenumber FROM users WHERE phonenumber = $1`,
-        [userPhone]
+        `SELECT phonenumber FROM users WHERE user_id = $1`,
+        [userId]
       );
 
       if (result.rows.length === 0) {
