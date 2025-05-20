@@ -35,7 +35,6 @@ app.use(
         "'self'",
         "https://fonts.googleapis.com",
         "https://cdnjs.cloudflare.com",
-        //"'unsafe-inline'", // Allow inline styles
       ],
 
       fontSrc: [
@@ -50,21 +49,9 @@ app.use(
         "https://fonts.gstatic.com",
       ],
 
-      scriptSrc: [
-        "'self'",
-        "https://cdnjs.cloudflare.com",
-        //"'unsafe-inline'", // Allow inline scripts
-      ],
+      scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
 
-      // Allow images or other assets
       imgSrc: ["'self'", "data:"],
-
-      // Allow preconnect/prefetch
-      preconnectSrc: [
-        "'self'",
-        "https://fonts.googleapis.com",
-        "https://fonts.gstatic.com",
-      ],
 
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],

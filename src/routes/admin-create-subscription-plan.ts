@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { authenticateAdmin } from "../middlewares/authenticateAdmin";
+import { authenticateAdmin } from "../middlewares/authenticate-admin";
 import { validateSubscriptionPlanDetails } from "../utils";
 import { createSubscriptionPlan } from "../utils";
 
@@ -21,19 +21,27 @@ router.post(
       } = req.body;
 
       try {
-        const email = req.admin?.email || "";
+        const email = req.admin?.adminId || "";
 
-        const { offerName, offerDescription, _cost, timeDuration, adminId, popular, active, _features } =
-          await validateSubscriptionPlanDetails(
-            offer_name,
-            offer_description,
-            cost,
-            duration,
-            email,
-            is_popular,
-            is_active,
-            features
-          );
+        const {
+          offerName,
+          offerDescription,
+          _cost,
+          timeDuration,
+          adminId,
+          popular,
+          active,
+          _features,
+        } = await validateSubscriptionPlanDetails(
+          offer_name,
+          offer_description,
+          cost,
+          duration,
+          email,
+          is_popular,
+          is_active,
+          features
+        );
 
         // Create the subscription plan
         await createSubscriptionPlan(
@@ -51,9 +59,11 @@ router.post(
       } catch (err: any) {
         return res
           .status(400)
-          .json({ message: err.message || "Failed to create subscription plan" });
+          .json({
+            message: err.message || "Failed to create subscription plan",
+          });
       }
-    })()
+    })();
   }
 );
 

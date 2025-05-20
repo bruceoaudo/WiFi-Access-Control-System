@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { authenticateAdmin } from "../middlewares/authenticateAdmin";
+import { authenticateAdmin } from "../middlewares/authenticate-admin";
 import { db } from "../db";
 
 const router = Router();
@@ -8,7 +8,7 @@ router.get("/get-plans", authenticateAdmin, (req: Request, res: Response) => {
   (async () => {
     try {
       // Confirm if admin exists first
-      const email = req.admin?.email;
+      const email = req.admin?.adminId
 
       const adminResult = await db.query(
         `SELECT email FROM admin WHERE email = $1`,
@@ -40,11 +40,9 @@ router.get("/get-plans", authenticateAdmin, (req: Request, res: Response) => {
 
       return res.status(200).json(formattedPlans);
     } catch (error: any) {
-      res
-        .status(500)
-        .json({
-          error: error.message || "Something went wrong. Try again later",
-        });
+      res.status(500).json({
+        error: error.message || "Something went wrong. Try again later",
+      });
     }
   })();
 });

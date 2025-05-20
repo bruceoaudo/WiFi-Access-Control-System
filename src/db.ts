@@ -54,6 +54,17 @@ export async function createTables() {
     `);
 
     await db.query(`
+      CREATE TABLE IF NOT EXISTS admin_sessions (
+        session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        admin_id INTEGER REFERENCES admin(admin_id) ON DELETE CASCADE,
+        fingerprint TEXT NOT NULL,
+        jti TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        revoked BOOLEAN DEFAULT FALSE
+      );
+    `);
+
+    await db.query(`
       CREATE TABLE IF NOT EXISTS subscription_plan (
         plan_id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,

@@ -7,25 +7,25 @@ const throwError = () => {
 };
 const JWT_SECRET = process.env.JWT_SECRET ?? throwError();
 
-export interface AuthenticatedUserRequest extends Request {
-  user?: { userId: string };
+export interface AuthenticatedAdminRequest extends Request {
+  admin?: { adminId: string };
 }
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: {
-      userId: string;
+    admin?: {
+      adminId: string;
     };
   }
 }
 
-export const authenticateUser = async (
-  req: AuthenticatedUserRequest,
+export const authenticateAdmin = async (
+  req: AuthenticatedAdminRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies?.user_token;
+    const token = req.cookies?.admin_token;
 
     if (!token) {
       res.status(401).json({ error: "Authentication token missing" });
@@ -41,7 +41,7 @@ export const authenticateUser = async (
 
     // Verify token exists in the session store
     const { rows } = await db.query(
-      "SELECT * FROM user_sessions WHERE user_id = $1 AND fingerprint = $2 AND revoked = false",
+      "SELECT * FROM admin_sessions WHERE admin_id = $1 AND fingerprint = $2 AND revoked = false",
       [decoded.sub, decoded.fingerprint]
     );
 
@@ -50,7 +50,7 @@ export const authenticateUser = async (
       return;
     }
 
-    req.user = { userId: decoded.sub };
+    req.admin = { adminId: decoded.sub };
     next();
   } catch (err) {
     res.status(401).json({ error: "Invalid or expired token" });

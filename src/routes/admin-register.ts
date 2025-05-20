@@ -19,7 +19,7 @@ router.post("/admin-register", (req: Request, res: Response) => {
     } catch (err: any) {
       return res
         .status(401)
-        .json({ error: err.message || "Invalid credentials" });
+        .json({ error: err.message });
     }
   })();
 });

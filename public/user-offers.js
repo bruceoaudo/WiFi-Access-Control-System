@@ -4,33 +4,38 @@ const setLoading = (isLoading) => {
   const overlay = document.getElementById("loadingOverlay");
   const spinner = document.getElementById("loadingSpinner");
 
-  if (isLoading) {
-    overlay.style.display = "block";
-    spinner.style.display = "block";
-  } else {
-    overlay.style.display = "none";
-    spinner.style.display = "none";
+  if (overlay && spinner) {
+    overlay.style.display = isLoading ? "block" : "none";
+    spinner.style.display = isLoading ? "block" : "none";
   }
+};
+
+const sanitize = (unsafe) => {
+  const div = document.createElement("div");
+  div.textContent = unsafe;
+  return div.innerHTML;
 };
 
 const showError = (message) => {
   const error = document.getElementById("error");
-  error.innerHTML = `<p>${message}</p>`;
-  error.style.opacity = "1";
-
-  setTimeout(() => {
-    error.style.opacity = "0";
-  }, 3000);
+  if (error) {
+    error.innerHTML = `<p>${sanitize(message)}</p>`;
+    error.style.opacity = "1";
+    setTimeout(() => {
+      error.style.opacity = "0";
+    }, 3000);
+  }
 };
 
 const showSuccess = (message) => {
   const success = document.getElementById("success");
-  success.innerHTML = `<p>${message}</p>`;
-  success.style.opacity = "1";
-
-  setTimeout(() => {
-    success.style.opacity = "0";
-  }, 3000);
+  if (success) {
+    success.innerHTML = `<p>${sanitize(message)}</p>`;
+    success.style.opacity = "1";
+    setTimeout(() => {
+      success.style.opacity = "0";
+    }, 3000);
+  }
 };
 
 const fetchOffers = async () => {
@@ -40,16 +45,14 @@ const fetchOffers = async () => {
       window.location.hostname === "localhost"
         ? "http://localhost:3000/api/v1/plans/get-plans"
         : window.location.origin + "/api/v1/plans/get-plans";
-    
-    const response = await fetch(
-      apiUrl,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      credentials:"include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Failed to fetch offers");
@@ -69,6 +72,8 @@ const fetchOffers = async () => {
 const renderOffers = (plans) => {
   const container = document.getElementById("offers-container");
 
+  if (!container) return;
+
   if (!plans || plans.length === 0) {
     container.innerHTML =
       '<p class="no-offers">No offers available at the moment.</p>';
@@ -76,41 +81,44 @@ const renderOffers = (plans) => {
   }
 
   container.innerHTML = plans
-    .map(
-      (plan) => `
-    <div class="offer-card ${plan.is_popular ? "special-offer" : ""}">
-      <div class="offer-header">
-        <div class="offer-name">${plan.name}</div>
-        <div class="offer-price">KES ${parseFloat(plan.cost).toFixed(2)}</div>
-        <div class="offer-duration">${plan.duration}</div>
-      </div>
-      <div class="offer-body">
-        <ul class="offer-features">
-          ${(plan.features || [])
-            .map(
-              (feature) => `
-            <li><i class="fas fa-check"></i> ${feature}</li>
-          `
-            )
-            .join("")}
-        </ul>
-        <div class="offer-actions">
-          <button class="btn btn-primary" data-plan-id="${plan.plan_id}">
-            Get Started
-          </button>
+    .map((plan) => {
+      const safeName = sanitize(plan.name);
+      const safeCost = sanitize(plan.cost.toString());
+      const safeDuration = sanitize(plan.duration);
+      const features = (plan.features || [])
+        .map(
+          (feature) =>
+            `<li><i class="fas fa-check"></i> ${sanitize(feature)}</li>`
+        )
+        .join("");
+
+      return `
+        <div class="offer-card ${plan.is_popular ? "special-offer" : ""}">
+          <div class="offer-header">
+            <div class="offer-name">${safeName}</div>
+            <div class="offer-price">KES ${safeCost}</div>
+            <div class="offer-duration">${safeDuration}</div>
+          </div>
+          <div class="offer-body">
+            <ul class="offer-features">${features}</ul>
+            <div class="offer-actions">
+              <button class="btn btn-primary" data-plan-id="${sanitize(
+                plan.plan_id
+              )}">
+                Get Started
+              </button>
+            </div>
+            ${
+              plan.is_popular
+                ? '<div class="offer-savings">Popular Choice</div>'
+                : ""
+            }
+          </div>
         </div>
-        ${
-          plan.is_popular
-            ? '<div class="offer-savings">Popular Choice</div>'
-            : ""
-        }
-      </div>
-    </div>
-  `
-    )
+      `;
+    })
     .join("");
 
-  // Add event listeners to buttons
   document.querySelectorAll(".btn-primary").forEach((button) => {
     button.addEventListener("click", handlePurchase);
   });
@@ -134,6 +142,7 @@ const handlePurchase = async (event) => {
 
     const response = await fetch(apiUrl, {
       method: "POST",
+      credentials:"include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -148,7 +157,6 @@ const handlePurchase = async (event) => {
 
     showSuccess("Check your phone for the M-Pesa pop-up...");
 
-    // Poll backend for confirmation
     const pollResult = await pollPaymentStatus();
 
     if (pollResult.status === "success") {
@@ -166,26 +174,34 @@ const handlePurchase = async (event) => {
   }
 };
 
+let isPolling = false;
+
 const pollPaymentStatus = async () => {
+  if (isPolling) return { status: "pending" };
+  isPolling = true;
+
   const apiUrl =
     window.location.hostname === "localhost"
       ? "http://localhost:3000/api/v1/plans/payment-status"
       : window.location.origin + "/api/v1/plans/payment-status";
-  const maxAttempts = 10;
-  const delay = 1000; // 1 seconds
+
+  const maxAttempts = 5;
+  const delay = 2000;
+
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise((res) => setTimeout(res, delay));
     const res = await fetch(apiUrl);
     const data = await res.json();
-
     if (data.status !== "pending") {
+      isPolling = false;
       return data;
     }
   }
+
+  isPolling = false;
   return { status: "timeout" };
 };
 
-// Initialize when DOM loads
 document.addEventListener("DOMContentLoaded", () => {
   fetchOffers();
 });

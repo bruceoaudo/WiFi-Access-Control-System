@@ -149,44 +149,48 @@ export const validateAdminLoginDetails = async (
   email: string,
   password: string
 ) => {
+  // Make sure they are strings
+  if (typeof email !== "string" || typeof password !== "string") {
+    throw new BadRequestError("Invalid input type");
+  }
+
+  const sanitizedEmail = email.trim();
+  const sanitizedPassword = password.trim();
+
   // Check for empty inputs
-  if (!email || !password) {
-    throw new Error("All fields must be filled");
+  if (!sanitizedEmail || !sanitizedPassword) {
+    throw new BadRequestError("Please provide email and password");
   }
 
-  try {
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new Error("Invalid email format");
-    }
-
-    // Retrieve user from database (use parameterized query)
-    const result = await db.query(
-      `SELECT EMAIL, PASSWORD FROM admin WHERE EMAIL = $1`,
-      [email]
-    );
-
-    if (result.rows.length === 0) {
-      throw new Error("Invalid credentials");
-    }
-
-    const admin = result.rows[0];
-
-    // Compare password to see if they match
-    const isVerified = await verifyPassword(password, admin.password);
-
-    if (!isVerified) {
-      throw new Error("Invalid credentials");
-    }
-
-    // Return phone
-    return {
-      emailAddress: admin.email,
-    };
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Basic email validation
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(sanitizedEmail)) {
+    throw new BadRequestError("Invalid email format");
   }
+
+  // Retrieve user from database (use parameterized query)
+  const result = await db.query(
+    `SELECT ADMIN_ID, PASSWORD FROM admin WHERE EMAIL = $1`,
+    [sanitizedEmail]
+  );
+
+  if (result.rows.length === 0) {
+    throw new UnauthorizedError("Invalid credentials");
+  }
+
+  const admin = result.rows[0];
+
+  // Compare password to see if they match
+  const isVerified = await verifyPassword(sanitizedPassword, admin.password);
+
+  if (!isVerified) {
+    throw new UnauthorizedError("Invalid credentials");
+  }
+
+  // Return phone
+  return {
+    adminId: admin.admin_id,
+  };
 };
 
 export const validateAdminRegisterDetails = async (
@@ -200,36 +204,63 @@ export const validateAdminRegisterDetails = async (
   phoneNumber: string;
   hashedPassword: string;
 }> => {
-  if (!name || !email || !phone || !password) {
+  // Sanitize and validate types
+  if (
+    typeof name !== "string" ||
+    typeof email !== "string" ||
+    typeof phone !== "string" ||
+    typeof password !== "string"
+  ) {
+    throw new Error("Invalid input type");
+  }
+
+  const sanitizedName = name.trim();
+  const sanitizedEmail = email.trim();
+  const sanitizedPhone = phone.trim();
+  const sanitizedPassword = password.trim();
+
+  if (
+    !sanitizedName ||
+    !sanitizedEmail ||
+    !sanitizedPhone ||
+    !sanitizedPassword
+  ) {
     throw new Error("All fields must be filled");
   }
 
-  try {
-    // Basic phone validation
-    const phoneRegex = /^\d{10,}$/;
-    if (!phoneRegex.test(phone)) {
-      throw new Error("Invalid phone number format");
-    }
-
-    const result = await db.query(`SELECT email FROM admin WHERE email = $1`, [
-      email,
-    ]);
-
-    if (result.rows.length > 0) {
-      throw new Error("Admin already registered.");
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    return {
-      userName: name,
-      emailAddress: email,
-      phoneNumber: phone,
-      hashedPassword: hashedPassword,
-    };
-  } catch (error: any) {
-    throw new Error(error.message);
+  // Validate name length
+  if (sanitizedName.length < 2 || sanitizedName.length > 50) {
+    throw new Error("Name must be between 2 and 50 characters");
   }
+
+  // Basic phone validation (10–15 digits)
+  const phoneRegex = /^\d{10,15}$/;
+  if (!phoneRegex.test(sanitizedPhone)) {
+    throw new Error("Invalid phone number format");
+  }
+
+  // Basic email validation
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(sanitizedEmail)) {
+    throw new BadRequestError("Invalid email format");
+  }
+
+  const result = await db.query(`SELECT email FROM admin WHERE email = $1`, [
+    sanitizedEmail,
+  ]);
+
+  if (result.rows.length > 0) {
+    throw new Error("Admin already registered.");
+  }
+
+  const hashedPassword = await hashPassword(sanitizedPassword);
+
+  return {
+    userName: name,
+    emailAddress: email,
+    phoneNumber: phone,
+    hashedPassword: hashedPassword,
+  };
 };
 
 export const validateSubscriptionPlanDetails = async (
@@ -319,10 +350,11 @@ export const registerAdmin = async (
     // Insert the new admin
     await db.query(
       `INSERT INTO admin (NAME, EMAIL, PHONENUMBER, PASSWORD) VALUES ($1, $2, $3, $4)`,
-      [name, email, phone, password]
+      [name.trim(), email.trim(), phone.trim(), password]
     );
   } catch (error: any) {
-    throw new Error(error.message);
+    console.error("DB Insert Error:", error);
+    throw new Error("Unable to register admin at this time");
   }
 };
 
