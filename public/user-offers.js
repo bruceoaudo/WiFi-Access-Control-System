@@ -43,7 +43,7 @@ const fetchOffers = async () => {
   try {
     const apiUrl =
       window.location.hostname === "localhost"
-        ? "http://localhost:3000/api/v1/plans/get-plans"
+        ? "http://localhost:4000/api/v1/plans/get-plans"
         : window.location.origin + "/api/v1/plans/get-plans";
 
     const response = await fetch(apiUrl, {
@@ -137,7 +137,7 @@ const handlePurchase = async (event) => {
   try {
     const apiUrl =
       window.location.hostname === "localhost"
-        ? "http://localhost:3000/api/v1/plans/purchase-plan"
+        ? "http://localhost:4000/api/v1/plans/purchase-plan"
         : window.location.origin + "/api/v1/plans/purchase-plan";
 
     const response = await fetch(apiUrl, {
@@ -182,7 +182,7 @@ const pollPaymentStatus = async () => {
 
   const apiUrl =
     window.location.hostname === "localhost"
-      ? "http://localhost:3000/api/v1/plans/payment-status"
+      ? "http://localhost:4000/api/v1/plans/payment-status"
       : window.location.origin + "/api/v1/plans/payment-status";
 
   const maxAttempts = 5;

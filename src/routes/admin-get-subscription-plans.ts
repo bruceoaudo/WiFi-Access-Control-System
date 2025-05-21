@@ -8,11 +8,11 @@ router.get("/get-plans", authenticateAdmin, (req: Request, res: Response) => {
   (async () => {
     try {
       // Confirm if admin exists first
-      const email = req.admin?.adminId
+      const adminId = req.admin?.adminId
 
       const adminResult = await db.query(
-        `SELECT email FROM admin WHERE email = $1`,
-        [email]
+        `SELECT admin_id FROM admin WHERE admin_id = $1`,
+        [adminId]
       );
 
       if (adminResult.rows.length === 0) {

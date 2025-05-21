@@ -51,7 +51,7 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
 
     const apiUrl =
       window.location.hostname === "localhost"
-        ? "http://localhost:3000/api/v1/auth/register"
+        ? "http://localhost:4000/api/v1/auth/register"
         : window.location.origin + "/api/v1/auth/register";
 
     const response = await fetch(apiUrl, {

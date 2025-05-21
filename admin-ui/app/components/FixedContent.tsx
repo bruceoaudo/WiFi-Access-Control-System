@@ -1,4 +1,4 @@
-export default function FixedContent() {
+export default function FixedContent({ newSignups }: { newSignups: number }) {
   return (
     <section className="fixed h-[150px] border-b border-b-gray-100 right-0 left-[60px] p-5 z-80 bg-gray-100 top-[60px]">
       <div id="top-main-fixed">
@@ -30,7 +30,9 @@ export default function FixedContent() {
             <span className="block text-sm font-medium text-gray-500">
               New Signups
             </span>
-            <span className="block text-xl font-bold text-gray-800">8</span>
+            <span className="block text-xl font-bold text-gray-800">
+              {newSignups}
+            </span>
           </div>
         </div>
       </div>

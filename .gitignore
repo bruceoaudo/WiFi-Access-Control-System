@@ -1,3 +1,6 @@
 .env
 node_modules/
 dist/
+admin-ui/next-env.d.ts
+admin-ui/.next
+admin-ui/node_modules

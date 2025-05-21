@@ -105,6 +105,15 @@ export async function createTables() {
       );
     `);
 
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS daily_signups (
+        id SERIAL PRIMARY KEY,
+        signup_date DATE NOT NULL UNIQUE,
+        signup_count INTEGER NOT NULL DEFAULT 0
+      );
+    `);
+
+
     console.log("All tables checked/created successfully.");
   } catch (err) {
     console.error("Error creating tables:", err);

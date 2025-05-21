@@ -18,7 +18,7 @@ export default function PlanList({
     <>
       {plans.map((plan, index) => (
         <PlanCard
-          key={index}
+          key={plan.plan_id}
           plan={plan}
           openModal={openModal}
           setOpenModal={setOpenModal}

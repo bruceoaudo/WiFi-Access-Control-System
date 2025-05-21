@@ -33,7 +33,7 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
 
     const apiUrl =
       window.location.hostname === "localhost"
-        ? "http://localhost:3000/api/v1/admin/auth/admin-login"
+        ? "http://localhost:4000/api/v1/admin/auth/admin-login"
         : window.location.origin + "/api/v1/admin/auth/admin-login";
 
     const response = await fetch(apiUrl, {
@@ -54,7 +54,7 @@ document.getElementById("formEl").addEventListener("submit", async (event) => {
     showSuccess(result.message || "Login successful");
     // Redirect to offers page
     setTimeout(() => {
-      window.location.href = window.location.origin + "/dashboard.html";
+      window.location.href = "http://localhost:3000/";
     }, 1000);
   } catch (error) {
     console.error("Login error:", error);

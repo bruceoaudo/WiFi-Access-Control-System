@@ -41,7 +41,7 @@ export default function Modal({
 
       {/* Modal content */}
       <motion.section
-        className="relative z-[1001] bg-white w-[calc(100%-150px)] rounded-lg p-8 shadow-lg mx-auto mt-[10px] h-[calc(100%-10px)] overflow-y-auto"
+        className="relative z-[1001] bg-white w-[calc(100%-150px)] rounded-none p-8 shadow-lg mx-auto mt-[0px] h-full overflow-y-auto"
         initial={{ y: "100%", opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}

@@ -1,7 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import path from "path";
 import http from "http";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import LoginRoute from "./routes/user-login";
 import RegisterRoute from "./routes/user-register";
 import AdminLoginRoute from "./routes/admin-login";
@@ -17,14 +17,31 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import { createTables, db } from "./db";
+import GetAllTransactionsRoute from "./routes/admin-get-all-transactions";
+import { Server } from "socket.io";
 
 dotenv.config();
 const app: Application = express();
 app.use(cookieParser());
 const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 app.set("trust proxy", 1);
+
+const corsOptions: CorsOptions = {
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "UPDATE", "PUT", "DELETE"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use(
   helmet.contentSecurityPolicy({
@@ -45,6 +62,7 @@ app.use(
 
       connectSrc: [
         "'self'",
+        "http://localhost:3000", // Admin dashboard
         "https://fonts.googleapis.com",
         "https://fonts.gstatic.com",
       ],
@@ -62,14 +80,6 @@ app.use(
 (async () => {
   await createTables();
 })();
-
-// Middleware
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "development" ? "*" : "production-domain.com",
-  })
-);
 
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.url}`);
@@ -126,6 +136,10 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "healthy" });
 });
 
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
+
 // --- Rate Limiter ---
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -139,17 +153,18 @@ const authLimiter = rateLimit({
 
 // Routes
 //app.use("/api/v1/mpesa", MpesaCallBackRoute);
-app.use("/api/v1/auth", authLimiter);
+//app.use("/api/v1/auth", authLimiter);
 app.use("/api/v1/auth", LoginRoute);
 app.use("/api/v1/auth", RegisterRoute);
 app.use("/api/v1/plans", GetPlansRoute);
 app.use("/api/v1/plans", PurchasePlanRoute);
 app.use("/api/v1/plans", PaymentStatusRoute);
 
-app.use("/api/v1/admin/auth", authLimiter);
+//app.use("/api/v1/admin/auth", authLimiter);
 app.use("/api/v1/admin/auth", AdminLoginRoute);
 app.use("/api/v1/admin/auth", AdminRegisterRoute);
 app.use("/api/v1/admin", GetAdminPlansRoute);
+app.use("/api/v1/admin", GetAllTransactionsRoute);
 app.use("/api/v1/admin", CreatePlansRoute);
 
 // Error handling middleware
@@ -219,3 +234,5 @@ process.on("unhandledRejection", (reason, promise) => {
     reason
   );
 });
+
+export {io}

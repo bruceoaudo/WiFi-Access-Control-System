@@ -1,12 +1,15 @@
 import React, { Dispatch, SetStateAction } from "react";
 
 export type Plan = {
-  name: string;
-  cost: number;
+  admin_id: string;
+  cost: string;
+  description: string;
   duration: string;
-  features: string[];
-  is_popular: boolean;
   is_active: boolean;
+  is_popular: boolean;
+  plan_id: string;
+  name: boolean;
+  features: string[];
 };
 
 type PlanCardProps = {
@@ -36,7 +39,7 @@ export default function PlanCard({
           )}
         </div>
         <div className="text-blue-600 font-bold text-xl">
-          KES {plan.cost.toFixed(2)}
+          KES {Number(plan.cost).toFixed(2)}
         </div>
         <div className="text-sm text-gray-500 mt-1">
           {plan.duration || "No duration specified"}
