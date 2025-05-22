@@ -21,6 +21,8 @@ import GetAllTransactionsRoute from "./routes/admin-get-all-transactions";
 import { Server } from "socket.io";
 import GetDailySignupCountRoute from "./routes/admin-get-daily-signups"
 import GetDailyRevenueRoute from "./routes/admin-get-daily-revenue"
+import GetAdminAccountDetails from "./routes/admin-get-account-details"
+import ChangeAdminPassword from "./routes/admin-change-password"
 
 dotenv.config();
 const app: Application = express();
@@ -171,6 +173,8 @@ app.use("/api/v1/admin", GetAllTransactionsRoute);
 app.use("/api/v1/admin", CreatePlansRoute);
 app.use("/api/v1/admin", GetDailySignupCountRoute);
 app.use("/api/v1/admin", GetDailyRevenueRoute);
+app.use("/api/v1/admin", GetAdminAccountDetails);
+app.use("/api/v1/admin", ChangeAdminPassword);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

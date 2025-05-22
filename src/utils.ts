@@ -3,7 +3,7 @@ import { db } from "./db";
 import argon2 from "argon2";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "./erros";
 
-const verifyPassword = async (
+export const verifyPassword = async (
   password: string,
   hashedPassword: string
 ): Promise<boolean> => {
@@ -14,7 +14,7 @@ const verifyPassword = async (
   }
 };
 
-const hashPassword = async (password: string): Promise<string> => {
+export const hashPassword = async (password: string): Promise<string> => {
   return await argon2.hash(password, {
     type: argon2.argon2id, // Use Argon2id for better security
     memoryCost: 2 ** 16, // 64 MB of memory (default is 4096 KiB = 2^12)

@@ -55,11 +55,8 @@ export default function Modal({
           <XMarkIcon className="size-8 text-black cursor-pointer" />
         </button>
 
-        <h2 className="text-xl font-bold mb-4">{selectedMenu}</h2>
-
         {selectedMenu === "User Management" && <UserManagement />}
         {selectedMenu === "Network Monitoring" && <Network />}
-        {selectedMenu === "Reports" && <Reports />}
         {selectedMenu === "Settings" && <Settings />}
         {selectedMenu === "Transactions" && <Transactions />}
         {selectedMenu === "Add New Plan" && <NewPlanForm />}
@@ -69,7 +66,6 @@ export default function Modal({
           "User Management",
           "Network Monitoring",
           "Reports",
-          "Settings",
           "Transactions",
           "Add New Plan",
           "Edit Plan",

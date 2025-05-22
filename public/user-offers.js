@@ -1,15 +1,3 @@
-const socket = io({
-  withCredentials: true,
-});
-
-socket.on("connect", () => {
-  console.log("Socket connected:", socket.id);
-});
-
-socket.on("revenue_update", (data) => {
-  console.log("Revenue update:", data);
-});
-
 let allPlans = [];
 
 const setLoading = (isLoading) => {

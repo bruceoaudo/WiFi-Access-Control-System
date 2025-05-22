@@ -3,7 +3,6 @@ import {
   Cog6ToothIcon,
   PresentationChartLineIcon,
   Squares2X2Icon,
-  TableCellsIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/solid";
 import { Dispatch, SetStateAction } from "react";
@@ -14,7 +13,6 @@ const icons = [
   { label: "Network Monitoring", icon: PresentationChartLineIcon },
   { label: "Transactions", icon: BanknotesIcon },
   { label: "Settings", icon: Cog6ToothIcon },
-  { label: "Reports", icon: TableCellsIcon },
 ];
 
 type SideNavProps = {

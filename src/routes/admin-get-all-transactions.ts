@@ -5,47 +5,48 @@ import { db } from "../db";
 const router = Router();
 
 router.get(
-  "/get-all-transactions",
+  "/get-transactions",
   authenticateAdmin,
-  (req: Request, res: Response) => {
-    (async () => {
-      try {
-        const adminId = req.admin?.adminId;
+  async (req: Request, res: Response) => {
+    const { timeframe, startDate, endDate } = req.query;
+    let query = `
+      SELECT 
+        mp.id AS payment_id,
+        u.name AS username,
+        u.phonenumber AS phone_number,
+        sp.name AS plan_name,
+        CAST(sp.cost AS FLOAT) AS cost,
+        mp.status,
+        mp.created_at
+      FROM mpesa_payments mp
+      JOIN users u ON mp.user_id = u.user_id
+      JOIN subscription_plan sp ON mp.plan_id = sp.plan_id
+    `;
 
-        // Confirm admin exists
-        const adminResult = await db.query(
-          "SELECT admin_id FROM admin WHERE admin_id = $1",
-          [adminId]
-        );
+    const params: any[] = [];
+    let whereClause = "";
 
-        if (adminResult.rows.length === 0) {
-          return res.status(401).json({ error: "Admin does not exist" });
-        }
+    if (timeframe === "custom" && startDate && endDate) {
+      whereClause = `WHERE mp.created_at BETWEEN $1 AND $2`;
+      params.push(startDate, endDate);
+    } else {
+      let days = 1;
+      if (timeframe === "weekly") days = 7;
+      else if (timeframe === "monthly") days = 30;
 
-        // Get all mpesa payments with user name and plan name
-        const result = await db.query(`
-            SELECT 
-              mp.id AS payment_id,
-              u.name AS username,
-              u.phonenumber AS phone_number,
-              sp.name AS plan_name,
-              sp.cost::TEXT AS cost,
-              mp.status,
-              mp.created_at
-            FROM mpesa_payments mp
-            INNER JOIN users u ON mp.user_id = u.user_id
-            INNER JOIN subscription_plan sp ON mp.plan_id = sp.plan_id
-            ORDER BY mp.created_at DESC;
-          `);
+      whereClause = `WHERE mp.created_at >= NOW() - INTERVAL '${days} days'`;
+    }
 
-        return res.status(200).json(result.rows);
-      } catch (error: any) {
-        console.error("Error fetching transactions:", error);
-        res.status(500).json({
-          error: error.message || "Something went wrong. Try again later",
-        });
-      }
-    })();
+    try {
+      const result = await db.query(
+        `${query} ${whereClause} ORDER BY mp.created_at DESC`,
+        params
+      );
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 );
 
