@@ -55,7 +55,8 @@ router.post(
           Password: password,
           Timestamp: timeStamp,
           TransactionType: "CustomerPayBillOnline",
-          Amount: Number(plan.rows[0].cost),
+          //Amount: Number(plan.rows[0].cost),
+          Amount: Number("1"),
           PartyA: Number(customerPhone),
           PartyB: Number(process.env.MPESA_BUSINESS_SHORTCODE),
           PhoneNumber: Number(customerPhone),
@@ -73,10 +74,7 @@ router.post(
           [userId, plan_id, checkoutRequestID, "pending"]
         );
 
-        res.status(200).json({
-          message: "STK push sent",
-          request_id: checkoutRequestID,
-        });
+        res.status(200).json({ data: checkoutRequestID });
       } catch (error: any) {
         console.error({ error });
         res.status(500).json({

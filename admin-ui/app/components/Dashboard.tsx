@@ -17,6 +17,8 @@ export default function Dashboard() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newSignups, setNewSignups] = useState(0);
+  const [dailyRevenue, setDailyRevenue] = useState(0);
+
 
   useEffect(() => {
     const socket = getSocket();
@@ -26,9 +28,13 @@ export default function Dashboard() {
     });
 
     socket.on("register", (data) => {
-      console.log("New user registered:", data);
-      setNewSignups(data.count); // Update count in real-time
+      setNewSignups(data.count);
     });
+
+    socket.on("revenue_update", (data) => {
+      setDailyRevenue(data.total);
+    });
+
 
     const fetchPlans = async () => {
       setLoading(true);
@@ -48,9 +54,44 @@ export default function Dashboard() {
       }
     };
 
+     const fetchSignupCount = async () => {
+       try {
+         const response = await axios.get(
+           "http://localhost:4000/api/v1/admin/daily-signups",
+           {
+             headers: { "Content-Type": "application/json" },
+             withCredentials: true,
+           }
+         );
+         setNewSignups(response.data.count); // Initialize with existing count
+       } catch (error) {
+         console.error("Failed to fetch today's signup count:", error);
+       }
+     };
+    
+    const fetchDailyRevenue = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/v1/admin/daily-revenue",
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
+        setDailyRevenue(response.data.total);
+      } catch (error) {
+        console.error("Failed to fetch today's revenue:", error);
+      }
+    };
+
+
     fetchPlans();
+    fetchSignupCount()
+    fetchDailyRevenue()
 
     return () => {
+      socket.off("register");
+      socket.off("revenue_update");
       socket.disconnect();
     };
   }, []);
@@ -74,7 +115,7 @@ export default function Dashboard() {
         setSelectedMenu={setSelectedMenu}
       />
       <main className="ml-[60px] mt-[60px]">
-        <FixedContent newSignups={newSignups} />
+        <FixedContent newSignups={newSignups} dailyRevenue={dailyRevenue} />
         <ScrollableContent
           plans={plans}
           openModal={openModal}

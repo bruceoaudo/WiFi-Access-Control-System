@@ -21,6 +21,7 @@ db.on("error", (err) => {
 
 export async function createTables() {
   try {
+    await db.query(`SET TIME ZONE 'Africa/Nairobi';`);
     await db.query(`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`);
 
     await db.query(`

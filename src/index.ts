@@ -11,7 +11,7 @@ import GetPlansRoute from "./routes/user-get-subscription-plans";
 import CreatePlansRoute from "./routes/admin-create-subscription-plan";
 import PurchasePlanRoute from "./routes/user-purchase-plan";
 import PaymentStatusRoute from "./routes/user-payment-status";
-//import MpesaCallBackRoute from "./routes/mpesa-callback";
+import MpesaCallBackRoute from "./routes/mpesa-callback";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
@@ -19,6 +19,8 @@ import rateLimit from "express-rate-limit";
 import { createTables, db } from "./db";
 import GetAllTransactionsRoute from "./routes/admin-get-all-transactions";
 import { Server } from "socket.io";
+import GetDailySignupCountRoute from "./routes/admin-get-daily-signups"
+import GetDailyRevenueRoute from "./routes/admin-get-daily-revenue"
 
 dotenv.config();
 const app: Application = express();
@@ -27,16 +29,17 @@ const port: number = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://localhost:4000"],
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
+app.set("io", io);
 app.set("trust proxy", 1);
 
 const corsOptions: CorsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "http://localhost:4000"],
   methods: ["GET", "POST", "UPDATE", "PUT", "DELETE"],
   credentials: true,
 };
@@ -152,7 +155,7 @@ const authLimiter = rateLimit({
 });
 
 // Routes
-//app.use("/api/v1/mpesa", MpesaCallBackRoute);
+app.use("/api/v1/mpesa", MpesaCallBackRoute);
 //app.use("/api/v1/auth", authLimiter);
 app.use("/api/v1/auth", LoginRoute);
 app.use("/api/v1/auth", RegisterRoute);
@@ -166,6 +169,8 @@ app.use("/api/v1/admin/auth", AdminRegisterRoute);
 app.use("/api/v1/admin", GetAdminPlansRoute);
 app.use("/api/v1/admin", GetAllTransactionsRoute);
 app.use("/api/v1/admin", CreatePlansRoute);
+app.use("/api/v1/admin", GetDailySignupCountRoute);
+app.use("/api/v1/admin", GetDailyRevenueRoute);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

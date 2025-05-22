@@ -1,3 +1,15 @@
+const socket = io({
+  withCredentials: true,
+});
+
+socket.on("connect", () => {
+  console.log("Socket connected:", socket.id);
+});
+
+socket.on("revenue_update", (data) => {
+  console.log("Revenue update:", data);
+});
+
 let allPlans = [];
 
 const setLoading = (isLoading) => {
@@ -48,7 +60,7 @@ const fetchOffers = async () => {
 
     const response = await fetch(apiUrl, {
       method: "GET",
-      credentials:"include",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -142,7 +154,7 @@ const handlePurchase = async (event) => {
 
     const response = await fetch(apiUrl, {
       method: "POST",
-      credentials:"include",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -155,22 +167,73 @@ const handlePurchase = async (event) => {
       throw new Error(result.error || "Purchase failed");
     }
 
-    showSuccess("Check your phone for the M-Pesa pop-up...");
+    showSuccess("Check your phone for the M-Pesa pop-up.");
 
-    const pollResult = await pollPaymentStatus();
+    const checkoutId = result.data;
+    const status = await checkPaymentStatus(checkoutId);
 
-    if (pollResult.status === "success") {
-      showSuccess("Payment successful. Thank you!");
-    } else if (pollResult.status === "cancelled") {
-      showError("You dismissed the M-Pesa pop-up.");
-    } else {
-      showError("Payment failed. Please try again.");
+    switch (status.ResultCode) {
+      case "0":
+        showSuccess("Payment successful!");
+        break;
+      case "1":
+        showError("Insufficient funds. Try again.");
+        break;
+      case "1032":
+        showError("Prompt dismissed. Try again.");
+        break;
+      case "1037":
+        showError("No response. Check phone/SIM.");
+        break;
+      case "1025":
+        showError("System error. Try again shortly.");
+        break;
+      case "9999":
+        showError("Unexpected error. Try again shortly.");
+        break;
+      case "1019":
+        showError("Request expired. Try again.");
+        break;
+      case "1001":
+        showError("Another transaction in progress.");
+        break;
+      case "2001":
+        showError("Invalid Mpesa PIN. Try again.");
+        break;
+      default:
+        showError("Payment failed. Try again later.");
+        break;
     }
+
   } catch (error) {
     console.error("Purchase error:", error);
-    showError(error.message);
+    showError(error.message || "An unexpected error occurred.");
   } finally {
     setLoading(false);
+  }
+};
+
+const checkPaymentStatus = async (checkoutId) => {
+  try {
+    const apiUrl =
+      window.location.hostname === "localhost"
+        ? "http://localhost:4000/api/v1/plans/payment-status"
+        : window.location.origin + "/api/v1/plans/payment-status";
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ data: checkoutId }),
+    });
+
+    const data = await response.json();
+
+    return data.data;
+  } catch (error) {
+    console.log({ error });
   }
 };
 

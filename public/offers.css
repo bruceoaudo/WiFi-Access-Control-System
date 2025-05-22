@@ -229,7 +229,7 @@ main {
   text-align: center;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   padding: 12px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   transition: opacity 0.5s ease-in-out;

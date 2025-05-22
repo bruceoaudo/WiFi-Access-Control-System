@@ -1,4 +1,10 @@
-export default function FixedContent({ newSignups }: { newSignups: number }) {
+export default function FixedContent({
+  newSignups,
+  dailyRevenue,
+}: {
+  newSignups: number;
+  dailyRevenue: number;
+}) {
   return (
     <section className="fixed h-[150px] border-b border-b-gray-100 right-0 left-[60px] p-5 z-80 bg-gray-100 top-[60px]">
       <div id="top-main-fixed">
@@ -17,7 +23,7 @@ export default function FixedContent({ newSignups }: { newSignups: number }) {
               Today's Revenue
             </span>
             <span className="block text-xl font-bold text-gray-800">
-              KES 3,450
+              KES {dailyRevenue.toLocaleString()}
             </span>
           </div>
           <div className="stat-card bg-white p-4 rounded shadow text-center">
