@@ -65,7 +65,7 @@ export default function Modal({
         {![
           "User Management",
           "Network Monitoring",
-          "Reports",
+          "Settings",
           "Transactions",
           "Add New Plan",
           "Edit Plan",
