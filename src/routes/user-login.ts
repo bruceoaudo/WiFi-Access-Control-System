@@ -21,6 +21,11 @@ router.post("/login", (req: Request, res: Response) => {
       // 1. Sanitize and validate login details
       const { userId } = await validateUserLoginDetails(phone, password);
 
+      const clientIp = req.headers["x-forwarded-for"] || req.ip;
+      const clientMac = req.headers["x-client-mac"] || "00:00:00:00:00:00";
+
+      console.log({ clientIp, clientMac });
+
       // 2. Add JWT token metadata (iat, jti, and fingerprint)
       const fingerprint = crypto.randomUUID(); // helps identify the session
       const jti = crypto.randomUUID();
@@ -51,12 +56,9 @@ router.post("/login", (req: Request, res: Response) => {
 
       return res.status(200).json({ message: "Login successful" });
     } catch (err: any) {
-
       console.error("Login error:", err.message);
 
-      return res
-        .status(401)
-        .json({ error: err.message });
+      return res.status(401).json({ error: err.message });
     }
   })();
 });
