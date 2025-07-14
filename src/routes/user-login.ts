@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { validateUserLoginDetails } from "../utils";
 import crypto from "crypto";
 import { db } from "../db";
+import { exec } from "child_process";
 
 const router = Router();
 
@@ -12,55 +13,91 @@ if (!JWT_SECRET || JWT_SECRET.length < 32) {
   throw new Error("JWT_SECRET must be set and at least 32 characters long");
 }
 
+// --- Whitelist in Nodogsplash ---
+async function whitelistClient(
+  mac: string,
+  ip: string,
+  duration: number = 3600
+) {
+  return new Promise((resolve, reject) => {
+    exec(`sudo ndsctl allow ${mac} ${duration}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Failed to whitelist ${mac}:`, stderr);
+        reject(new Error("Failed to grant network access"));
+      } else {
+        console.log(`Whitelisted ${mac} (${ip}) for ${duration} seconds`);
+        resolve(stdout);
+      }
+    });
+  });
+}
+
 // --- Login Route ---
-router.post("/login", (req: Request, res: Response) => {
-  (async () => {
-    try {
-      const { phone, password } = req.body;
+router.post("/login", async (req: Request, res: Response) => {
+  try {
+    const { phone, password } = req.body;
 
-      // 1. Sanitize and validate login details
-      const { userId } = await validateUserLoginDetails(phone, password);
+    // 1. Validate credentials
+    const { userId } = await validateUserLoginDetails(phone, password);
 
-      const clientIp = req.headers["x-forwarded-for"] || req.ip;
-      const clientMac = req.headers["x-client-mac"] || "00:00:00:00:00:00";
+    console.log(req);
 
-      console.log({ clientIp, clientMac });
+    // 2. Get client details
+    const clientIp = req.ip || req.connection.remoteAddress;
+    const clientMac =
+      req.query.mac || req.headers["x-nds-mac"] || "00:00:00:00:00:00";
 
-      // 2. Add JWT token metadata (iat, jti, and fingerprint)
-      const fingerprint = crypto.randomUUID(); // helps identify the session
-      const jti = crypto.randomUUID();
+    // 3. Whitelist in nodogsplash
+    await whitelistClient(clientMac.toString(), clientIp!.toString());
 
-      // Save session to DB
-      await db.query(
-        "INSERT INTO user_sessions (user_id, fingerprint, jti) VALUES ($1, $2, $3)",
-        [userId, fingerprint, jti]
-      );
-      const tokenPayload = {
+    // 4. Create JWT session
+    const fingerprint = crypto.randomUUID();
+    const jti = crypto.randomUUID();
+
+    await db.query(
+      "INSERT INTO user_sessions (user_id, fingerprint, jti, mac_address) VALUES ($1, $2, $3, $4)",
+      [userId, fingerprint, jti, clientMac]
+    );
+
+    const token = jwt.sign(
+      {
         sub: userId,
-        jti, // unique JWT ID to prevent replay
-        fingerprint, // stored to cross-check if needed
-      };
-
-      const token = jwt.sign(tokenPayload, JWT_SECRET, {
+        jti,
+        fingerprint,
+        //mac: clientMac, // Optional: embed MAC in JWT
+      },
+      JWT_SECRET,
+      {
         algorithm: "HS256",
         expiresIn: "7d",
-      });
+      }
+    );
 
-      // 3. Set cookie with secure options
-      res.cookie("user_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
+    // 5. Set secure cookie
+    res.cookie("user_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-      return res.status(200).json({ message: "Login successful" });
-    } catch (err: any) {
-      console.error("Login error:", err.message);
+    res.on("finish", () => {
+      if (res.statusCode === 200) {
+        whitelistClient(clientMac.toString(), clientIp!.toString()).catch(
+          console.error
+        );
+      }
+    });
 
-      return res.status(401).json({ error: err.message });
-    }
-  })();
+    res.status(200).json({
+      message: "Login successful",
+      access_duration: "1 hour",
+    });
+    return;
+  } catch (err: any) {
+    console.error("Login error:", err.message);
+    res.status(401).json({ error: err.message });
+  }
 });
 
 export default router;
